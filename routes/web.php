@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CekAbsenController;
+use App\Http\Controllers\AbsenDewasaController;
 use App\Http\Controllers\DaftarDewasaController;
 
 // Route::get('/', function () {
@@ -24,11 +25,18 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
         ]);
     })->name('dashboard');
 
-     Route::get('/EditDewasa', [DaftarDewasaController::class, 'index'])->name('edit.dewasa');
+    Route::get('/EditDewasa', [DaftarDewasaController::class, 'index'])->name('edit.dewasa');
     Route::get('/DaftarDewasa', [DaftarDewasaController::class, 'create'])->name('daftar.dewasa');
     Route::post('/DaftarDewasa/create', [DaftarDewasaController::class, 'store'])->name('daftar.dewasa.store');
     Route::get('/UpdateDewasa/{dataDewasa}/edit', [DaftarDewasaController::class, 'edit'])->name('daftar.dewasa.edit');
     Route::put('/UpdateDewasa/{dataDewasa}', [DaftarDewasaController::class, 'update'])->name('daftar.dewasa.update');
+
+    Route::get('/AbsenDewasa', [AbsenDewasaController::class, 'index'])->name('absen.dewasa');
+    Route::get('/EditAbsenDewasa', [AbsenDewasaController::class, 'index2'])->name('edit.absen.dewasa');
+    Route::post('/AbsenDewasa', [AbsenDewasaController::class, 'store'])->name('absen.dewasa.store');
+    Route::get('/SearchDewasa', [AbsenDewasaController::class, 'search'])->name('search.dewasa');
+    Route::get('/absen-dewasa/{id}/edit', [AbsenDewasaController::class, 'edit'])->name('absen.dewasa.edit');
+    Route::put('/absen-dewasa/{id}', [AbsenDewasaController::class, 'update'])->name('absen.dewasa.update');
 
     Route::post('/nomor/next', function () {
         $next = session('nomor', 1) + 1;
