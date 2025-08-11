@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\CekAbsenController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CekAbsenController;
+use App\Http\Controllers\DaftarDewasaController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -23,9 +24,11 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
         ]);
     })->name('dashboard');
 
-    Route::get('/DaftarDewasa', function () {
-        dd(session()->all());
-    })->name('daftar.dewasa');
+     Route::get('/EditDewasa', [DaftarDewasaController::class, 'index'])->name('edit.dewasa');
+    Route::get('/DaftarDewasa', [DaftarDewasaController::class, 'create'])->name('daftar.dewasa');
+    Route::post('/DaftarDewasa/create', [DaftarDewasaController::class, 'store'])->name('daftar.dewasa.store');
+    Route::get('/UpdateDewasa/{dataDewasa}/edit', [DaftarDewasaController::class, 'edit'])->name('daftar.dewasa.edit');
+    Route::put('/UpdateDewasa/{dataDewasa}', [DaftarDewasaController::class, 'update'])->name('daftar.dewasa.update');
 
     Route::post('/nomor/next', function () {
         $next = session('nomor', 1) + 1;
