@@ -159,4 +159,93 @@ class AbsenDewasaController extends Controller
     //     if ($bmi < 30) return 'GEMUK';
     //     return 'OBESITAS';
     // }
+
+    public function isiBB(Request $request, $id)
+    {
+        $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
+
+        $absenDewasa = AbsenDewasa::where('id', $id)
+            ->whereDate('tanggal_absen', $tanggalAktif)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'bb' => 'nullable|integer',
+            'tb' => 'nullable|integer',
+            'lp' => 'nullable|integer',
+            'lila' => 'nullable|integer',
+            'sistole' => 'nullable|integer',
+            'diastole' => 'nullable|integer',
+            'ket' => 'nullable|string',
+        ]);
+
+        // Calculate BMI if weight and height are provided
+        // if ($request->bb && $request->tb) {
+        //     $height_m = $request->tb / 100;
+        //     $bmi = round($request->bb / ($height_m * $height_m), 2);
+        //     $validated['bmi'] = $bmi;
+        //     $validated['hasil'] = $this->getBmiStatus($bmi);
+        // }
+
+        $absenDewasa->update($validated);
+
+        return redirect()->route('formDewasa')
+            ->with('success', 'Data berhasil diperbarui');
+    }
+
+    public function indexIsiBB()
+    {
+        // Get active date from tanggal_aktif table
+        $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
+
+        // Get absen records with empty measurements for active date
+        $absenKosong = AbsenDewasa::whereDate('tanggal_absen', $tanggalAktif)
+            ->where(function ($query) {
+                $query->whereNull('bb')
+                    ->orWhereNull('tb')
+                    ->orWhereNull('lp')
+                    ->orWhereNull('lila')
+                    ->orWhereNull('sistole')
+                    ->orWhereNull('diastole');
+            })
+            ->get();
+
+        return view('main.formDewasa', compact('absenKosong', 'tanggalAktif'));
+    }
+
+    public function indexIsiDarah()
+    {
+
+        $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
+
+        $absenKosong = AbsenDewasa::whereDate('tanggal_absen', $tanggalAktif)
+            ->where(function ($query) {
+                $query->whereNull('au')
+                    ->orWhereNull('kol')
+                    ->orWhereNull('gda');
+            })
+            ->get();
+
+        return view('main.formDarah', compact('absenKosong', 'tanggalAktif'));
+    }
+
+    public function isiDarah(Request $request, $id)
+    {
+        $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
+
+        $absenDewasa = AbsenDewasa::where('id', $id)
+            ->whereDate('tanggal_absen', $tanggalAktif)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'au' => 'nullable|numeric',
+            'gda' => 'nullable|numeric',
+            'kol' => 'nullable|numeric',
+            'ket' => 'nullable|string',
+        ]);
+
+        $absenDewasa->update($validated);
+
+        return redirect()->route('formDarah')
+            ->with('success', 'Data berhasil diperbarui');
+    }
 }

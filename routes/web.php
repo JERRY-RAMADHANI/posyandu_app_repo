@@ -1,30 +1,61 @@
 <?php
 
+use App\Models\TanggalAktif;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CekAbsenController;
 use App\Http\Controllers\AbsenDewasaController;
 use App\Http\Controllers\DaftarDewasaController;
+use Illuminate\Support\Facades\Auth;
+
+// Move root route outside middleware groups and add role checking
+Route::get('/', function () {
+    if (!Auth::check()) {
+        return redirect('login');
+    }
+
+    $user = Auth::user();
+
+    // Redirect based on role
+    if ($user->role === 1) {
+        return redirect()->route('formDewasa');
+    } elseif ($user->role === 2) {
+        return redirect()->route('formDarah');
+    }
+
+    // For role 0 (admin), set up the dashboard
+    if (!session()->has('tanggal')) {
+        session(['tanggal' => now()->format('Y-m-d')]);
+    }
+
+    if (!session()->has('nomor')) {
+        session(['nomor' => 1]);
+    }
+
+    if (!TanggalAktif::exists()) {
+        TanggalAktif::create([
+            'tanggal' => now()->format('Y-m-d')
+        ]);
+    } else {
+        $tanggalAktif = TanggalAktif::first();
+        $tanggalHariIni = now()->format('Y-m-d');
+
+        if ($tanggalAktif->tanggal !== $tanggalHariIni) {
+            $tanggalAktif->update(['tanggal' => $tanggalHariIni]);
+        }
+    }
+
+
+    return view('main.admin.dashboard', [
+        'nomor' => session('nomor')
+    ]);
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
 Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
-    Route::get('/', function () {
-        if (!session()->has('tanggal')) {
-            session(['tanggal' => now()->format('Y-m-d')]);
-        }
-
-        if (!session()->has('nomor')) {
-            session(['nomor' => 1]);
-        }
-
-        return view('main.admin.dashboard', [
-            'nomor' => session('nomor')
-        ]);
-    })->name('dashboard');
-
     Route::get('/EditDewasa', [DaftarDewasaController::class, 'index'])->name('edit.dewasa');
     Route::get('/DaftarDewasa', [DaftarDewasaController::class, 'create'])->name('daftar.dewasa');
     Route::post('/DaftarDewasa/create', [DaftarDewasaController::class, 'store'])->name('daftar.dewasa.store');
@@ -35,8 +66,9 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
     Route::get('/EditAbsenDewasa', [AbsenDewasaController::class, 'index2'])->name('edit.absen.dewasa');
     Route::post('/AbsenDewasa', [AbsenDewasaController::class, 'store'])->name('absen.dewasa.store');
     Route::get('/SearchDewasa', [AbsenDewasaController::class, 'search'])->name('search.dewasa');
-    Route::get('/absen-dewasa/{id}/edit', [AbsenDewasaController::class, 'edit'])->name('absen.dewasa.edit');
-    Route::put('/absen-dewasa/{id}', [AbsenDewasaController::class, 'update'])->name('absen.dewasa.update');
+    Route::get('/AbsenDewasa/{id}/edit', [AbsenDewasaController::class, 'edit'])->name('absen.dewasa.edit');
+    Route::put('/AbsenDewasa/{id}', [AbsenDewasaController::class, 'update'])->name('absen.dewasa.update');
+
 
     Route::post('/nomor/next', function () {
         $next = session('nomor', 1) + 1;
@@ -59,6 +91,15 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
         $request->validate([
             'tanggal' => 'required|date',
         ]);
+
+        if (TanggalAktif::exists()) {
+            TanggalAktif::truncate();
+        }
+
+        TanggalAktif::create([
+            'tanggal' => $request->tanggal
+        ]);
+
         session(['tanggal' => $request->tanggal]);
         return back()->with('success', 'Tanggal sukses diubah!');
     })->name('tanggal.set');
@@ -73,9 +114,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'role:1'])->group(function () {
-    Route::get('/formDewasa', function () {
-        return view('main.formDewasa');
-    })->name('formDewasa');
+    Route::get('/formDewasa', [AbsenDewasaController::class, 'indexIsiBB'])->name('formDewasa');
+    Route::put('/formDewasa/{id}/isi-bb', [AbsenDewasaController::class, 'isiBB'])->name('formDewasa.isi-bb');
 
     Route::get('/formAnak', function () {
         return view('main.formAnak');
@@ -84,9 +124,8 @@ Route::middleware(['auth', 'verified', 'role:1'])->group(function () {
 
 
 Route::middleware(['auth', 'verified', 'role:2'])->group(function () {
-    Route::get('/formDarah', function () {
-        return view('formDarah');
-    })->name('formDarah');
+    Route::get('/formDarah', [AbsenDewasaController::class, 'indexIsiDarah'])->name('formDarah');
+    Route::put('/formDarah/{id}/isi-darah', [AbsenDewasaController::class, 'isiDarah'])->name('formDarah.isi-darah');
 });
 
 

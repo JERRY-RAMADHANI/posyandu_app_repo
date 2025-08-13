@@ -2,9 +2,11 @@
 
 @php
     use Carbon\Carbon;
+    use App\Models\TanggalAktif;
 
     $nomor = session('nomor', 1);
-    $tanggalSession = session('tanggal', now()->format('Y-m-d'));
+    $tanggalAktif = TanggalAktif::first();
+    $tanggalSession = session('tanggal', $tanggalAktif ? $tanggalAktif->tanggal : now()->format('Y-m-d'));
     $tanggalDisplay = Carbon::parse($tanggalSession)->format('Y-m-d');
 @endphp
 
