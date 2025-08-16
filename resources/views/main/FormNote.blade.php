@@ -15,23 +15,6 @@
         <!-- Judul -->
         <h1 class="text-lg font-bold" style="color: #FF9B00">Input Pengukuran</h1>
 
-        <!-- Tombol Navigasi Balita / Dewasa -->
-        <div class="flex space-x-4">
-            <a href="{{ route('formAnak') }}"
-                class="px-4 py-2 rounded-lg font-medium transition-colors
-           @if (request()->routeIs('formAnak')) bg-orange-500 text-white shadow-md
-           @else
-                bg-gray-100 text-gray-700 hover:bg-gray-200 @endif">
-                Balita
-            </a>
-            <a href="{{ route('formDewasa') }}"
-                class="px-4 py-2 rounded-lg font-medium transition-colors
-           @if (request()->routeIs('formDewasa')) bg-orange-500 text-white shadow-md
-           @else
-                bg-gray-100 text-gray-700 hover:bg-gray-200 @endif">
-                Dewasa
-            </a>
-        </div>
 
         <!-- Logout -->
         @auth

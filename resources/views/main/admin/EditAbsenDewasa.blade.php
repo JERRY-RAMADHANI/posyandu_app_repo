@@ -30,7 +30,7 @@
                         <th scope="col" class="py-3 px-6">Nama</th>
                         <th scope="col" class="py-3 px-6">Tanggal Lahir</th>
                         <th scope="col" class="py-3 px-6">Usia</th>
-                        <th scope="col" class="py-3 px-6">Alamat</th>
+                        <th scope="col" class="py-3 px-6" style="min-width: 130px;">Alamat</th>
                         <th scope="col" class="py-3 px-6">BB</th>
                         <th scope="col" class="py-3 px-6">TB</th>
                         <th scope="col" class="py-3 px-6">LP</th>

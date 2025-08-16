@@ -104,7 +104,13 @@
 
     <!-- Script -->
     <script>
-        function callNumber(nomor, skipIntro = false) {
+        @if (session('call_with_intro'))
+            document.addEventListener('DOMContentLoaded', () => {
+                callNumber({{ session('nomor') }}, false);
+            });
+        @endif
+
+        function callNumber(nomor, skipIntro = true) {
             const audio = document.getElementById("callSound");
             audio.onended = null;
 

@@ -36,7 +36,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('formDewasa');
         } elseif ($user->role === 2) {
             return redirect()->route('formDarah');
+        } elseif ($user->role === 3) {
+            return redirect()->route('formNote');
         }
+
 
         return redirect('/');
     }

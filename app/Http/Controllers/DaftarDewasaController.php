@@ -30,6 +30,22 @@ class DaftarDewasaController extends Controller
         return view('main.admin.EditDewasa', compact('dataDewasa'));
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->search;
+        $type = $request->type;
+
+        $query = DataDewasa::query();
+
+        if ($type === 'reg') {
+            $query->where('no_reg', 'LIKE', "{$search}%");
+        } else {
+            $query->where('nama', 'LIKE', "%{$search}%");
+        }
+
+        return $query->limit(10)->get();
+    }
+
 
     public function create()
     {

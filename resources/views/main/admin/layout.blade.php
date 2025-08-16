@@ -23,7 +23,9 @@
 <body class="min-h-screen flex flex-col">
     <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
         <div class="px-3 py-3 lg:px-5 lg:pl-3">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between relative">
+
+                <!-- Kiri: Logo + Sidebar Toggle -->
                 <div class="flex items-center justify-start rtl:justify-end">
                     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar"
                         aria-controls="logo-sidebar" type="button"
@@ -37,9 +39,19 @@
                         </svg>
                     </button>
                     <a class="flex ms-2 md:me-24">
-                        <img src="/sound/Logo_Posyandu_Jeruk.png" class="h-8 me-3" alt="FlowBite Logo" />
+                        <img src="/sound/Logo_Posyandu_Jeruk.png" class="h-8 me-3" alt="Logo Posyandu" />
                     </a>
                 </div>
+
+                <!-- Tengah: Judul -->
+                <div class="absolute left-1/2 transform -translate-x-1/2">
+                    <span
+                        class="text-3xl font-extrabold bg-gradient-to-r from-[#FF9B00] via-[#FFE100] via-[#FFC900] to-[#EBE389] bg-clip-text text-transparent">
+                        Posyandu ILP Jeruk
+                    </span>
+                </div>
+
+                <!-- Kanan: Logout -->
                 <div class="flex items-center">
                     @auth
                         <form method="POST" action="{{ route('logout') }}">
@@ -55,6 +67,7 @@
         </div>
     </nav>
 
+
     <aside id="logo-sidebar"
         class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0"
         aria-label="Sidebar">
@@ -62,10 +75,10 @@
             <ul class="space-y-2 font-medium">
                 <li>
                     <a href="{{ route('dashboard') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                        <svg class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
-                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                            viewBox="0 0 22 21">
+                        class="flex items-center p-2 rounded-lg group 
+                        {{ request()->routeIs('dashboard') ? 'bg-gradient-to-r from-[#FF9B00] to-[#FFE100] text-white' : 'text-gray-900 hover:bg-gray-100' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}"
+                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                             <path
                                 d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
                             <path
@@ -74,75 +87,88 @@
                         <span class="ms-3">Dashboard</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('absen.dewasa') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                        <svg class="shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
-                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                            viewBox="0 0 20 18">
+                        class="flex items-center p-2 rounded-lg group 
+                        {{ request()->routeIs('absen.dewasa') ? 'bg-gradient-to-r from-[#FF9B00] to-[#FFE100] text-white' : 'text-gray-900 hover:bg-gray-100' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('absen.dewasa') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}"
+                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
                             <path
                                 d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
                         </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Absen Dewasa</span>
+                        <span class="ms-3">Absen Dewasa</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('edit.absen.dewasa') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                        <svg class="shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                        class="flex items-center p-2 rounded-lg group 
+        {{ request()->routeIs('edit.absen.dewasa') ? 'bg-gradient-to-r from-[#FF9B00] to-[#FFE100] text-white' : 'text-gray-900 hover:bg-[#EBE389]' }}">
+                        <svg class="shrink-0 w-5 h-5 transition duration-75 
+            {{ request()->routeIs('edit.absen.dewasa') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}"
                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 18 18">
                             <path
                                 d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
                         </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Edit Absen Dewasa</span>
+                        <span class="ms-3">Edit Absen Dewasa</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('daftar.dewasa') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                        <svg class="shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                        class="flex items-center p-2 rounded-lg group 
+        {{ request()->routeIs('daftar.dewasa') ? 'bg-gradient-to-r from-[#FF9B00] to-[#FFE100] text-white' : 'text-gray-900 hover:bg-[#EBE389]' }}">
+                        <svg class="shrink-0 w-5 h-5 transition duration-75 
+            {{ request()->routeIs('daftar.dewasa') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}"
                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 18 18">
                             <path
                                 d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
                         </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Daftar Dewasa</span>
+                        <span class="ms-3">Daftar Dewasa</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('edit.dewasa') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                        <svg class="shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                        class="flex items-center p-2 rounded-lg group 
+        {{ request()->routeIs('edit.dewasa') ? 'bg-gradient-to-r from-[#FF9B00] to-[#FFE100] text-white' : 'text-gray-900 hover:bg-[#EBE389]' }}">
+                        <svg class="shrink-0 w-5 h-5 transition duration-75 
+            {{ request()->routeIs('edit.dewasa') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}"
                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 18 18">
                             <path
                                 d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
                         </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Edit Data Dewasa</span>
+                        <span class="ms-3">Edit Data Dewasa</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('CekAbsen') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                        <svg class="shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                        class="flex items-center p-2 rounded-lg group 
+        {{ request()->routeIs('CekAbsen') ? 'bg-gradient-to-r from-[#FF9B00] to-[#FFE100] text-white' : 'text-gray-900 hover:bg-[#EBE389]' }}">
+                        <svg class="shrink-0 w-5 h-5 transition duration-75 
+            {{ request()->routeIs('CekAbsen') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}"
                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 20 18">
                             <path
                                 d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
                         </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Cek Absen</span>
+                        <span class="ms-3">Cek Absen</span>
                     </a>
                 </li>
+
             </ul>
         </div>
     </aside>
 
-    <div class="h-screen pt-14 sm:ml-64"> <!-- Changed from flex-1 p-4 sm:ml-60 -->
+    <div class="h-screen pt-14 sm:ml-64">
         @yield('content')
     </div>
-
-
 </body>
+
 
 </html>

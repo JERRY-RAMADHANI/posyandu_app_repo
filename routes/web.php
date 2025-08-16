@@ -29,7 +29,7 @@ Route::get('/', function () {
     }
 
     if (!session()->has('nomor')) {
-        session(['nomor' => 1]);
+        session(['nomor' => 0]);
     }
 
     if (!TanggalAktif::exists()) {
@@ -59,13 +59,14 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
     Route::get('/EditDewasa', [DaftarDewasaController::class, 'index'])->name('edit.dewasa');
     Route::get('/DaftarDewasa', [DaftarDewasaController::class, 'create'])->name('daftar.dewasa');
     Route::post('/DaftarDewasa/create', [DaftarDewasaController::class, 'store'])->name('daftar.dewasa.store');
+    Route::get('/SearchDewasa', [DaftarDewasaController::class, 'search'])->name('search.dewasa');
     Route::get('/UpdateDewasa/{dataDewasa}/edit', [DaftarDewasaController::class, 'edit'])->name('daftar.dewasa.edit');
     Route::put('/UpdateDewasa/{dataDewasa}', [DaftarDewasaController::class, 'update'])->name('daftar.dewasa.update');
 
     Route::get('/AbsenDewasa', [AbsenDewasaController::class, 'index'])->name('absen.dewasa');
     Route::get('/EditAbsenDewasa', [AbsenDewasaController::class, 'index2'])->name('edit.absen.dewasa');
     Route::post('/AbsenDewasa', [AbsenDewasaController::class, 'store'])->name('absen.dewasa.store');
-    Route::get('/SearchDewasa', [AbsenDewasaController::class, 'search'])->name('search.dewasa');
+    Route::get('/SearchAbsenDewasa', [AbsenDewasaController::class, 'search'])->name('search.absen.dewasa');
     Route::get('/AbsenDewasa/{id}/edit', [AbsenDewasaController::class, 'edit'])->name('absen.dewasa.edit');
     Route::put('/AbsenDewasa/{id}', [AbsenDewasaController::class, 'update'])->name('absen.dewasa.update');
 
@@ -73,11 +74,11 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
     Route::post('/nomor/next', function () {
         $next = session('nomor', 1) + 1;
         session(['nomor' => $next]);
-        return back();
+        return back()->with('call_with_intro', true);
     })->name('nomor.next');
 
     Route::post('/nomor/reset', function () {
-        session(['nomor' => 1]);
+        session(['nomor' => 0]);
         return back();
     })->name('nomor.reset');
 
@@ -126,6 +127,12 @@ Route::middleware(['auth', 'verified', 'role:1'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:2'])->group(function () {
     Route::get('/formDarah', [AbsenDewasaController::class, 'indexIsiDarah'])->name('formDarah');
     Route::put('/formDarah/{id}/isi-darah', [AbsenDewasaController::class, 'isiDarah'])->name('formDarah.isi-darah');
+});
+
+Route::middleware(['auth', 'verified', 'role:3'])->group(function () {
+    Route::get('/formNote', function () {
+        return view('main.formNote');
+    })->name('formNote');
 });
 
 

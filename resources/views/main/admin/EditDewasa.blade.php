@@ -9,7 +9,7 @@
 
         <!-- Search Bar -->
         <div class="mb-4">
-            <form action="{{ route('daftar.dewasa') }}" method="GET" class="flex gap-2">
+            <form action="{{ route('edit.dewasa') }}" method="GET" class="flex gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" 
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     placeholder="Cari berdasarkan nama, NIK, atau No. Registrasi...">

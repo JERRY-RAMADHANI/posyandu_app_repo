@@ -39,6 +39,14 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'AdminNote',
+                'username' => 'AdminNote',
+                'password' => Hash::make('AdminNote123'),
+                'role' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
