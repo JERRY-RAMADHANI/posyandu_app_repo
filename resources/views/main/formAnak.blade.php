@@ -45,6 +45,133 @@
         @endauth
     </nav>
 
+    <!-- Main Content -->
+    <div class="min-h-screen p-6 pt-20" style="background: linear-gradient(135deg, #FF9B00 0%, #FFE100 100%);">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-center" style="color: #FF9B00">
+                    Input Pengukuran - {{ \Carbon\Carbon::parse($tanggalAktif)->format('d/m/Y') }}
+                </h2>
+            </div>
+
+            <!-- Search Section -->
+            <div class="mb-6 space-y-4">
+                <div class="relative">
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Cari Peserta</label>
+                    <input type="text" id="search_input" placeholder="Cari berdasarkan No. Registrasi atau Nama..."
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-white uppercase bg-orange-500">
+                        <tr>
+                            <th scope="col" class="py-3 px-6">No. Reg</th>
+                            <th scope="col" class="py-3 px-6">Nama</th>
+                            <th scope="col" class="py-3 px-6">Data Kosong</th>
+                            <th scope="col" class="py-3 px-6">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($absenKosong as $absen)
+                            <tr class="bg-white border-b hover:bg-gray-50 search-row">
+                                <td class="py-4 px-6">{{ $absen->no_reg }}</td>
+                                <td class="py-4 px-6">{{ $absen->nama }}</td>
+                                <td class="py-4 px-6">
+                                    @php
+                                        $kosong = [];
+                                        if (is_null($absen->bb)) {
+                                            $kosong[] = 'BB';
+                                        }
+                                        if (is_null($absen->tb)) {
+                                            $kosong[] = 'TB';
+                                        }
+                                        if (is_null($absen->ll)) {
+                                            $kosong[] = 'LL';
+                                        }
+                                        if (is_null($absen->lk)) {
+                                            $kosong[] = 'LILA';
+                                        }
+                                    @endphp
+                                    <span class="text-red-500">{{ implode(', ', $kosong) }}</span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <button
+                                        onclick="showInputForm(
+                                        '{{ $absen->id }}',
+                                        '{{ $absen->nama }}',
+                                        '{{ $absen->bb }}',
+                                        '{{ $absen->tb }}',
+                                        '{{ $absen->ll }}',
+                                        '{{ $absen->lk }}',
+                                    )"
+                                        class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+                                        Input Data
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr class="bg-white border-b">
+                                <td colspan="4" class="py-4 px-6 text-center">Tidak ada data pengukuran yang kosong
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="inputModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="modalTitle">Input Pengukuran</h3>
+                <form id="measurementForm" method="POST" class="space-y-4">
+                    @csrf
+                    @method('PUT')
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">BB (kg)</label>
+                        <input type="number" name="bb"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">TB (cm)</label>
+                        <input type="number" name="tb"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">LL (cm)</label>
+                        <input type="number" name="lp"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">LILA (cm)</label>
+                        <input type="number" name="lila"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    </div>
+
+                    <div class="flex justify-end space-x-3 mt-4">
+                        <button type="button" onclick="closeModal()"
+                            class="bg-gray-200 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-300">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="bg-orange-500 px-4 py-2 rounded-md text-sm font-medium text-white hover:bg-orange-600">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -67,13 +194,20 @@
             });
         });
 
-        function showInputForm(id, nama) {
+        function showInputForm(id, nama, bb, tb, ll, lk) {
             const modal = document.getElementById('inputModal');
             const form = document.getElementById('measurementForm');
             const title = document.getElementById('modalTitle');
 
             title.textContent = `Input Pengukuran - ${nama}`;
             form.action = `/formDewasa/${id}/isi-bb`;
+
+            // Prefill data kalau ada
+            form.querySelector('[name="bb"]').value = bb || '';
+            form.querySelector('[name="tb"]').value = tb || '';
+            form.querySelector('[name="lp"]').value = ll || '';
+            form.querySelector('[name="lila"]').value = lk || '';
+
             modal.classList.remove('hidden');
         }
 

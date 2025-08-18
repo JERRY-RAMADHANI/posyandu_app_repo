@@ -4,7 +4,7 @@
 <div class="min-h-screen p-6" style="background: linear-gradient(135deg, #FF9B00 0%, #FFE100 100%);">
     <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-8">
         <div class="mb-6">
-            <h2 class="text-2xl font-bold text-center" style="color: #FF9B00">Edit Data Absensi</h2>
+            <h2 class="text-2xl font-bold text-center" style="color: #FF9B00">Edit Data Absensi Dewasa</h2>
         </div>
 
         <form action="{{ route('absen.dewasa.update', $absenDewasa->id) }}" method="POST" class="space-y-6">

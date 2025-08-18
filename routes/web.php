@@ -5,9 +5,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CekAbsenController;
+use App\Http\Controllers\AbsenBalitaController;
 use App\Http\Controllers\AbsenDewasaController;
 use App\Http\Controllers\DaftarBalitaController;
 use App\Http\Controllers\DaftarDewasaController;
+use App\Http\Controllers\AbsensiBalitaController;
 
 // Move root route outside middleware groups and add role checking
 Route::get('/', function () {
@@ -78,12 +80,14 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
     Route::get('/AbsenDewasa/{id}/edit', [AbsenDewasaController::class, 'edit'])->name('absen.dewasa.edit');
     Route::put('/AbsenDewasa/{id}', [AbsenDewasaController::class, 'update'])->name('absen.dewasa.update');
 
-    Route::get('/AbsenBalita', [AbsenBalitaController::class, 'index'])->name('absen.balita');
-    Route::get('/EditAbsenBalita', [AbsenBalitaController::class, 'index2'])->name('edit.absen.balita');
-    Route::post('/AbsenBalita', [AbsenBalitaController::class, 'store'])->name('absen.balita.store');
-    Route::get('/SearchAbsenBalita', [AbsenBalitaController::class, 'search'])->name('search.absen.balita');
-    Route::get('/AbsenBalita/{id}/edit', [AbsenBalitaController::class, 'edit'])->name('absen.balita.edit');
-    Route::put('/AbsenBalita/{id}', [AbsenBalitaController::class, 'update'])->name('absen.balita.update');
+    Route::get('/AbsenBalita', [AbsensiBalitaController::class, 'index'])->name('absen.balita');
+    Route::get('/EditAbsenBalita', [AbsensiBalitaController::class, 'index2'])->name('edit.absen.balita');
+    Route::post('/AbsenBalita', [AbsensiBalitaController::class, 'store'])->name('absen.balita.store');
+    Route::get('/SearchAbsenBalita', [AbsensiBalitaController::class, 'search'])->name('search.absen.balita');
+    Route::get('/AbsenBalita/{id}/edit', [AbsensiBalitaController::class, 'edit'])->name('absen.balita.edit');
+    Route::put('/AbsenBalita/{id}', [AbsensiBalitaController::class, 'update'])->name('absen.balita.update');
+
+
 
 
     Route::post('/nomor/next', function () {
@@ -133,9 +137,8 @@ Route::middleware(['auth', 'verified', 'role:1'])->group(function () {
     Route::get('/formDewasa', [AbsenDewasaController::class, 'indexIsiBB'])->name('formDewasa');
     Route::put('/formDewasa/{id}/isi-bb', [AbsenDewasaController::class, 'isiBB'])->name('formDewasa.isi-bb');
 
-    Route::get('/formAnak', function () {
-        return view('main.formAnak');
-    })->name('formAnak');
+    Route::get('/formAnak', [AbsensiBalitaController::class, 'indexIsiBB'])->name('formAnak');
+    Route::put('/formAnak/{id}/isi-bb', [AbsensiBalitaController::class, 'isiBB'])->name('formAnak.isi-bb');
 });
 
 
@@ -145,9 +148,8 @@ Route::middleware(['auth', 'verified', 'role:2'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'role:3'])->group(function () {
-    Route::get('/formNote', function () {
-        return view('main.formNote');
-    })->name('formNote');
+    Route::get('/formNote', [AbsensiBalitaController::class, 'indexIsiKet'])->name('formNote');
+    Route::put('/formNote/{id}/isi-note', [AbsensiBalitaController::class, 'isiKet'])->name('formNote.isi-ket');
 });
 
 

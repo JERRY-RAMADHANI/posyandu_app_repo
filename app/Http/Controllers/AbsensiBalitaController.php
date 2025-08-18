@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\DataBalita;
 use App\Models\AbsenBalita;
 use App\Models\TanggalAktif;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
+use Illuminate\Routing\Controller;
 
-class AbsenBalitaController extends Controller
+class AbsensiBalitaController extends Controller
 {
     public function index()
     {
@@ -18,7 +18,7 @@ class AbsenBalitaController extends Controller
             session(['tanggal_absen' => Carbon::now()->toDateString()]);
         }
 
-        return view('main.admin.absenBalitaAbsenBalita');
+        return view('main.admin.absenBalita');
     }
 
     public function index2(Request $request)
@@ -59,12 +59,12 @@ class AbsenBalitaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'no_reg' => 'required|string',
-            'nik' => 'required|string',
-            'nama' => 'required|string',
-            'tanggal_lahir' => 'required|date',
-            'usia' => 'required|integer',
-            'alamat' => 'required|string'
+            'no_reg' => 'nullable|string',
+            'nik' => 'nullable|string',
+            'nama' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|date',
+            'usia' => 'nullable|integer',
+            'alamat' => 'nullable|string'
         ]);
 
         // Get tanggal_absen from session
@@ -87,17 +87,9 @@ class AbsenBalitaController extends Controller
         $validated = array_merge($validated, [
             'bb' => null,
             'tb' => null,
-            'lp' => null,
-            'lila' => null,
-            'sistole' => null,
-            'diastole' => null,
-            'au' => null,
-            'gda' => null,
-            'kol' => null,
-            'bmi' => null,
-            'hasil' => null,
+            'lk' => null,
+            'll' => null,
             'ket' => null,
-            'note' => null
         ]);
 
         AbsenBalita::create($validated);
@@ -107,37 +99,31 @@ class AbsenBalitaController extends Controller
 
     public function edit($id)
     {
-        $absenBalitaAbsenBalita = AbsenBalita::where('id', $id)
+        $absenBalita = AbsenBalita::where('id', $id)
             ->whereDate('tanggal_absen', session('tanggal'))
             ->firstOrFail();
 
-        return view('main.admin.UpdateAbsenBalita', compact('absenBalitaAbsenBalita'));
+        return view('main.admin.UpdateAbsenBalita', compact('absenBalita'));
     }
 
     public function update(Request $request, $id)
     {
-        $absenBalitaAbsenBalita = AbsenBalita::where('id', $id)
+        $absenBalita = AbsenBalita::where('id', $id)
             ->whereDate('tanggal_absen', session('tanggal'))
             ->firstOrFail();
 
         $validated = $request->validate([
-            'no_reg' => 'required|string',
-            'nik' => 'required|string',
-            'nama' => 'required|string',
-            'tanggal_lahir' => 'required|date',
-            'usia' => 'required|integer',
-            'alamat' => 'required|string',
+            'no_reg' => '|string',
+            'nik' => '|string',
+            'nama' => '|string',
+            'tanggal_lahir' => '|date',
+            'usia' => '|integer',
+            'alamat' => '|string',
             'bb' => 'nullable|integer',
             'tb' => 'nullable|integer',
-            'lp' => 'nullable|integer',
-            'lila' => 'nullable|integer',
-            'sistole' => 'nullable|integer',
-            'diastole' => 'nullable|integer',
-            'au' => 'nullable|integer',
-            'gda' => 'nullable|integer',
-            'kol' => 'nullable|integer',
+            'lk' => 'nullable|integer',
+            'll' => 'nullable|integer',
             'ket' => 'nullable|string',
-            'note' => 'nullable|string',
         ]);
 
         // Calculate BMI if weight and height are provided
@@ -148,9 +134,9 @@ class AbsenBalitaController extends Controller
         //     $validated['hasil'] = $this->getBmiStatus($bmi);
         // }
 
-        $absenBalitaAbsenBalita->update($validated);
+        $absenBalita->update($validated);
 
-        return redirect()->route('edit.absen.dewasa')
+        return redirect()->route('edit.absen.balita')
             ->with('success', 'Data berhasil diperbarui');
     }
 
@@ -166,18 +152,15 @@ class AbsenBalitaController extends Controller
     {
         $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
 
-        $absenBalitaAbsenBalita = AbsenBalita::where('id', $id)
+        $absenBalita = AbsenBalita::where('id', $id)
             ->whereDate('tanggal_absen', $tanggalAktif)
             ->firstOrFail();
 
         $validated = $request->validate([
             'bb' => 'nullable|integer',
             'tb' => 'nullable|integer',
-            'lp' => 'nullable|integer',
-            'lila' => 'nullable|integer',
-            'sistole' => 'nullable|integer',
-            'diastole' => 'nullable|integer',
-            'ket' => 'nullable|string',
+            'lk' => 'nullable|integer',
+            'll' => 'nullable|integer',
         ]);
 
         // Calculate BMI if weight and height are provided
@@ -188,9 +171,9 @@ class AbsenBalitaController extends Controller
         //     $validated['hasil'] = $this->getBmiStatus($bmi);
         // }
 
-        $absenBalitaAbsenBalita->update($validated);
+        $absenBalita->update($validated);
 
-        return redirect()->route('formDewasa')
+        return redirect()->route('formAnak')
             ->with('success', 'Data berhasil diperbarui');
     }
 
@@ -204,50 +187,43 @@ class AbsenBalitaController extends Controller
             ->where(function ($query) {
                 $query->whereNull('bb')
                     ->orWhereNull('tb')
-                    ->orWhereNull('lp')
-                    ->orWhereNull('lila')
-                    ->orWhereNull('sistole')
-                    ->orWhereNull('diastole');
+                    ->orWhereNull('lk')
+                    ->orWhereNull('ll');
             })
             ->get();
 
-        return view('main.formDewasa', compact('absenKosong', 'tanggalAktif'));
+        return view('main.formAnak', compact('absenKosong', 'tanggalAktif'));
     }
 
-    public function indexIsiDarah()
+    public function indexIsiKet()
     {
 
         $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
 
         $absenKosong = AbsenBalita::whereDate('tanggal_absen', $tanggalAktif)
             ->where(function ($query) {
-                $query->whereNull('au')
-                    ->orWhereNull('kol')
-                    ->orWhereNull('gda');
+                $query->whereNull('ket');
             })
             ->get();
 
-        return view('main.formDarah', compact('absenKosong', 'tanggalAktif'));
+        return view('main.formNote', compact('absenKosong', 'tanggalAktif'));
     }
 
-    public function isiDarah(Request $request, $id)
+    public function isiKet(Request $request, $id)
     {
         $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
 
-        $absenBalitaAbsenBalita = AbsenBalita::where('id', $id)
+        $absenBalita = AbsenBalita::where('id', $id)
             ->whereDate('tanggal_absen', $tanggalAktif)
             ->firstOrFail();
 
         $validated = $request->validate([
-            'au' => 'nullable|numeric',
-            'gda' => 'nullable|numeric',
-            'kol' => 'nullable|numeric',
             'ket' => 'nullable|string',
         ]);
 
-        $absenBalitaAbsenBalita->update($validated);
+        $absenBalita->update($validated);
 
-        return redirect()->route('formDarah')
+        return redirect()->route('formNote')
             ->with('success', 'Data berhasil diperbarui');
     }
 }

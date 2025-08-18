@@ -57,12 +57,12 @@ class AbsenDewasaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'no_reg' => 'required|string',
-            'nik' => 'required|string',
-            'nama' => 'required|string',
-            'tanggal_lahir' => 'required|date',
-            'usia' => 'required|integer',
-            'alamat' => 'required|string'
+            'no_reg' => 'nullable|string',
+            'nik' => 'nullable|string',
+            'nama' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|date',
+            'usia' => 'nullable|integer',
+            'alamat' => 'nullable|string'
         ]);
 
         // Get tanggal_absen from session
