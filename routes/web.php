@@ -1,12 +1,13 @@
 <?php
 
 use App\Models\TanggalAktif;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CekAbsenController;
 use App\Http\Controllers\AbsenDewasaController;
+use App\Http\Controllers\DaftarBalitaController;
 use App\Http\Controllers\DaftarDewasaController;
-use Illuminate\Support\Facades\Auth;
 
 // Move root route outside middleware groups and add role checking
 Route::get('/', function () {
@@ -63,12 +64,26 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
     Route::get('/UpdateDewasa/{dataDewasa}/edit', [DaftarDewasaController::class, 'edit'])->name('daftar.dewasa.edit');
     Route::put('/UpdateDewasa/{dataDewasa}', [DaftarDewasaController::class, 'update'])->name('daftar.dewasa.update');
 
+    Route::get('/EditBalita', [DaftarBalitaController::class, 'index'])->name('edit.balita');
+    Route::get('/DaftarBalita', [DaftarBalitaController::class, 'create'])->name('daftar.balita');
+    Route::post('/DaftarBalita/create', [DaftarBalitaController::class, 'store'])->name('daftar.balita.store');
+    Route::get('/SearchBalita', [DaftarBalitaController::class, 'search'])->name('search.balita');
+    Route::get('/UpdateBalita/{dataBalita}/edit', [DaftarBalitaController::class, 'edit'])->name('daftar.balita.edit');
+    Route::put('/UpdateBalita/{dataBalita}', [DaftarBalitaController::class, 'update'])->name('daftar.balita.update');
+
     Route::get('/AbsenDewasa', [AbsenDewasaController::class, 'index'])->name('absen.dewasa');
     Route::get('/EditAbsenDewasa', [AbsenDewasaController::class, 'index2'])->name('edit.absen.dewasa');
     Route::post('/AbsenDewasa', [AbsenDewasaController::class, 'store'])->name('absen.dewasa.store');
     Route::get('/SearchAbsenDewasa', [AbsenDewasaController::class, 'search'])->name('search.absen.dewasa');
     Route::get('/AbsenDewasa/{id}/edit', [AbsenDewasaController::class, 'edit'])->name('absen.dewasa.edit');
     Route::put('/AbsenDewasa/{id}', [AbsenDewasaController::class, 'update'])->name('absen.dewasa.update');
+
+    Route::get('/AbsenBalita', [AbsenBalitaController::class, 'index'])->name('absen.balita');
+    Route::get('/EditAbsenBalita', [AbsenBalitaController::class, 'index2'])->name('edit.absen.balita');
+    Route::post('/AbsenBalita', [AbsenBalitaController::class, 'store'])->name('absen.balita.store');
+    Route::get('/SearchAbsenBalita', [AbsenBalitaController::class, 'search'])->name('search.absen.balita');
+    Route::get('/AbsenBalita/{id}/edit', [AbsenBalitaController::class, 'edit'])->name('absen.balita.edit');
+    Route::put('/AbsenBalita/{id}', [AbsenBalitaController::class, 'update'])->name('absen.balita.update');
 
 
     Route::post('/nomor/next', function () {
