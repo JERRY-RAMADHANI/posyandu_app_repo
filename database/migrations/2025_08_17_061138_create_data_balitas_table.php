@@ -14,11 +14,19 @@ return new class extends Migration
         Schema::create('data_balitas', function (Blueprint $table) {
             $table->id();
             $table->string('no_reg')->unique()->nullable();
+            $table->string('prov')->nullable();
+            $table->string('kab')->nullable();
+            $table->string('kec')->nullable();
+            $table->string('nik_2_dig')->nullable();
             $table->string('nama')->nullable();
             $table->string('nik')->unique()->nullable();
             $table->date('tanggal_lahir')->nullable();
+            $table->integer('tgl')->nullable();
+            $table->integer('bln')->nullable();
+            $table->integer('thn')->nullable();
             $table->integer('usia')->nullable();
             $table->string('jenis_kelamin')->nullable();
+            $table->string('posyandu')->nullable();
             $table->string('nama_ortu')->nullable();
             $table->text('alamat')->nullable();
             $table->string('rt')->nullable();

@@ -41,6 +41,7 @@
                         <th scope="col" class="py-3 px-6">KOL</th>
                         <th scope="col" class="py-3 px-6">BMI</th>
                         <th scope="col" class="py-3 px-6">Status</th>
+                        <th scope="col" class="py-3 px-6">Hasil</th>
                         <th scope="col" class="py-3 px-6">Aksi</th>
                     </tr>
                 </thead>
@@ -62,6 +63,7 @@
                         <td class="py-4 px-6">{{ $data->gda ?? '-' }}</td>
                         <td class="py-4 px-6">{{ $data->kol ?? '-' }}</td>
                         <td class="py-4 px-6">{{ $data->bmi ?? '-' }}</td>
+                        <td class="py-4 px-6">{{ $data->status ?? '-' }}</td>
                         <td class="py-4 px-6">{{ $data->hasil ?? '-' }}</td>
                         <td class="py-4 px-6">
                             <a href="{{ route('absen.dewasa.edit', $data->id) }}" 

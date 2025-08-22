@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="min-h-screen p-6" style="background: linear-gradient(135deg, #FF9B00 0%, #FFE100 100%);">
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-8">
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-center" style="color: #FF9B00">Edit Data Absensi Dewasa</h2>
         </div>
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Measurements -->
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-5 gap-4">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Berat Badan (kg)</label>
                     <input type="number" name="bb" value="{{ $absenDewasa->bb }}"
@@ -73,6 +73,18 @@
                     <label class="block mb-2 text-sm font-medium text-gray-900">Lingkar Perut (cm)</label>
                     <input type="number" name="lp" value="{{ $absenDewasa->lp }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">BMI</label>
+                    <input type="number" name="bmi" id="bmi" value="{{ $absenDewasa->bmi }}" readonly
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Hasil</label>
+                    <input type="text" name="hasil" id="hasil" value="{{ $absenDewasa->hasil }}" readonly
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
                 </div>
             </div>
 

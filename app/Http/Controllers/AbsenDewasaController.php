@@ -146,6 +146,17 @@ class AbsenDewasaController extends Controller
         //     $validated['hasil'] = $this->getBmiStatus($bmi);
         // }
 
+        if ($request->bb && $request->tb) {
+        [$bmi, $status] = $this->calculateBmiAndStatus($request->bb, $request->tb);
+        $validated['bmi'] = $bmi;
+        $validated['hasil'] = $status;
+
+        // ✅ Update ke DataDewasa juga
+        DataDewasa::where('no_reg', $absenDewasa->no_reg)->update([
+            'bmi' => $status,
+        ]);
+    }
+
         $absenDewasa->update($validated);
 
         return redirect()->route('edit.absen.dewasa')
@@ -177,6 +188,16 @@ class AbsenDewasaController extends Controller
             'diastole' => 'nullable|integer',
             'ket' => 'nullable|string',
         ]);
+
+        if ($request->bb && $request->tb) {
+        [$bmi, $status] = $this->calculateBmiAndStatus($request->bb, $request->tb);
+        $validated['bmi'] = $bmi;
+        $validated['hasil'] = $status;
+
+        DataDewasa::where('no_reg', $absenDewasa->no_reg)->update([
+            'bmi' => $status,
+        ]);
+    }
 
         // Calculate BMI if weight and height are provided
         // if ($request->bb && $request->tb) {
@@ -247,5 +268,27 @@ class AbsenDewasaController extends Controller
 
         return redirect()->route('formDarah')
             ->with('success', 'Data berhasil diperbarui');
+    }
+
+    private function calculateBmiAndStatus($bb, $tb)
+    {
+        if (!$bb || !$tb) {
+            return [null, null];
+        }
+
+        $height_m = $tb / 100;
+        $bmi = round($bb / ($height_m * $height_m), 2);
+
+        if ($bmi < 18.5) {
+            $status = 'UNDERWEIGHT';
+        } elseif ($bmi < 25) {
+            $status = 'NORMAL';
+        } elseif ($bmi < 30) {
+            $status = 'OVERWEIGHT';
+        } else {
+            $status = 'OBESE';
+        }
+
+        return [$bmi, $status];
     }
 }

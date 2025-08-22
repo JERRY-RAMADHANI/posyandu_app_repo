@@ -113,7 +113,7 @@
                     style="background-color: #FF9B00; hover:background-color: #FFC900">
                     Update
                 </button>
-                <a href="{{ route('daftar.dewasa') }}"
+                <a href="{{ route('edit.dewasa') }}"
                     class="w-full text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-300 hover:shadow-lg"
                     style="background-color: #FFE100">
                     Cancel

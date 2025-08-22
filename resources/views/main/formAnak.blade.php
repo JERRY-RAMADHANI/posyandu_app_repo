@@ -147,13 +147,13 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">LL (cm)</label>
-                        <input type="number" name="lp"
+                        <input type="number" name="ll"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">LILA (cm)</label>
-                        <input type="number" name="lila"
+                        <input type="number" name="lk"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 
@@ -200,13 +200,13 @@
             const title = document.getElementById('modalTitle');
 
             title.textContent = `Input Pengukuran - ${nama}`;
-            form.action = `/formDewasa/${id}/isi-bb`;
+            form.action = `/formAnak/${id}/isi-bb`;
 
             // Prefill data kalau ada
             form.querySelector('[name="bb"]').value = bb || '';
             form.querySelector('[name="tb"]').value = tb || '';
-            form.querySelector('[name="lp"]').value = ll || '';
-            form.querySelector('[name="lila"]').value = lk || '';
+            form.querySelector('[name="ll"]').value = ll || '';
+            form.querySelector('[name="lk"]').value = lk || '';
 
             modal.classList.remove('hidden');
         }
