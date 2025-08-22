@@ -19,11 +19,12 @@ Route::get('/', function () {
 
     $user = Auth::user();
 
-    // Redirect based on role
     if ($user->role === 1) {
         return redirect()->route('formDewasa');
     } elseif ($user->role === 2) {
         return redirect()->route('formDarah');
+    } elseif ($user->role === 3) {
+        return redirect()->route('formNote');
     }
 
     // For role 0 (admin), set up the dashboard
@@ -35,16 +36,20 @@ Route::get('/', function () {
         session(['nomor' => 0]);
     }
 
-    if (!TanggalAktif::exists()) {
-        TanggalAktif::create([
-            'tanggal' => now()->format('Y-m-d')
-        ]);
+    if (session('changed', false) === false) {
+        $today = now()->format('Y-m-d');
+        session(['tanggal' => $today]);
+
+        if (TanggalAktif::exists()) {
+            TanggalAktif::truncate();
+            TanggalAktif::create(['tanggal' => $today]);
+        } else {
+            TanggalAktif::create(['tanggal' => $today]);
+        }
     } else {
         $tanggalAktif = TanggalAktif::first();
-        $tanggalHariIni = now()->format('Y-m-d');
-
-        if ($tanggalAktif->tanggal !== $tanggalHariIni) {
-            $tanggalAktif->update(['tanggal' => $tanggalHariIni]);
+        if ($tanggalAktif) {
+            session(['tanggal' => $tanggalAktif->tanggal]);
         }
     }
 
@@ -87,6 +92,18 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
     Route::get('/AbsenBalita/{id}/edit', [AbsensiBalitaController::class, 'edit'])->name('absen.balita.edit');
     Route::put('/AbsenBalita/{id}', [AbsensiBalitaController::class, 'update'])->name('absen.balita.update');
 
+    Route::get('/session/check', function () {
+        // Ambil session tertentu
+        $sessionData = [
+            'tanggal' => session('tanggal', null),
+            'nomor' => session('nomor', null),
+            'changed' => session('changed', false),
+        ];
+
+        // Return sebagai JSON biar gampang dicek di browser / Postman
+        return response()->json($sessionData);
+    })->middleware(['auth'])->name('session.check');
+
 
 
 
@@ -120,7 +137,10 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
             'tanggal' => $request->tanggal
         ]);
 
-        session(['tanggal' => $request->tanggal]);
+        session([
+            'tanggal' => $request->tanggal,
+            'changed' => true
+        ]);
         return back()->with('success', 'Tanggal sukses diubah!');
     })->name('tanggal.set');
 

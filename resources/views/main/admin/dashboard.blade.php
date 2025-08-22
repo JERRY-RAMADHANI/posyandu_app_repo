@@ -4,7 +4,7 @@
     use Carbon\Carbon;
     use App\Models\TanggalAktif;
 
-    $nomor = session('nomor', 1);
+    $nomor = session('nomor', 0);
     $tanggalAktif = TanggalAktif::first();
     $tanggalSession = session('tanggal', $tanggalAktif ? $tanggalAktif->tanggal : now()->format('Y-m-d'));
     $tanggalDisplay = Carbon::parse($tanggalSession)->format('Y-m-d');
