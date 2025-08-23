@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('kab')->nullable();
             $table->string('kec')->nullable();
             $table->string('nik_2_dig')->nullable();
+            $table->integer('anak_ke')->nullable();
+            $table->float('bb_lahir')->nullable();
+            $table->float('panjang_lahir')->nullable();
+            $table->integer('buku_kia')->nullable();
             $table->string('nama')->nullable();
             $table->string('nik')->unique()->nullable();
             $table->date('tanggal_lahir')->nullable();

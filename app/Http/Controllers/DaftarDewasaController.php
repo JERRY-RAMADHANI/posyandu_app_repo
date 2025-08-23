@@ -74,15 +74,40 @@ class DaftarDewasaController extends Controller
             'status' => 'nullable|string',
         ]);
 
-        // Tidak perlu generate no_reg lagi karena sudah dari form
-        // Ensure status and jenis_kelamin are uppercase
         $validated['status'] = strtoupper($validated['status']);
         $validated['jenis_kelamin'] = strtoupper($validated['jenis_kelamin']);
 
         DataDewasa::create($validated);
 
+        $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
+
+        // Create absen entry for the same day
+        \App\Models\AbsenDewasa::create([
+            'no_reg' => $validated['no_reg'],
+            'nik' => $validated['nik'],
+            'nama' => $validated['nama'],
+            'tanggal_lahir' => $validated['tanggal_lahir'],
+            'usia' => $validated['umur'],
+            'alamat' => $validated['alamat'],
+            'tanggal_absen' => $tanggalAktif,
+            'bb' => null,
+            'tb' => null,
+            'lb' => null,
+            'lila' => null,
+            'sistole' => null,
+            'diastole' => null,
+            'au' => null,
+            'gda' => null,
+            'kol' => null,
+            'ket' => null,
+            'bmi' => null,
+            'hasil' => null,
+            'status' => $validated['status'],
+            'note' => null,
+        ]);
+
         return redirect()->route('daftar.dewasa')
-            ->with('success', 'Data berhasil ditambahkan');
+            ->with('success', 'Data berhasil ditambahkan dan auto absen untuk hari ini');
     }
 
     public function edit(DataDewasa $dataDewasa)

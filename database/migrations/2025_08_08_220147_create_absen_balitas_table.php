@@ -20,13 +20,10 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable();
             $table->integer('usia')->nullable();
             $table->string('alamat')->nullable();
-            $table->integer('bb')->nullable();
-            $table->integer('tb')->nullable();
-            $table->integer('lk')->nullable();
-            $table->integer('ll')->nullable();
-            // $table->integer('sistole')->nullable();
-            // $table->integer('diastole')->nullable();
-            // $table->string('pemeriksaan')->nullable();
+            $table->float('bb')->nullable();
+            $table->float('tb')->nullable();
+            $table->float('lk')->nullable();
+            $table->float('ll')->nullable();
             $table->string('ket')->nullable();
             $table->timestamps();
         });

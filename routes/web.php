@@ -10,6 +10,7 @@ use App\Http\Controllers\AbsenDewasaController;
 use App\Http\Controllers\DaftarBalitaController;
 use App\Http\Controllers\DaftarDewasaController;
 use App\Http\Controllers\AbsensiBalitaController;
+use App\Http\Controllers\ExportController;
 
 // Move root route outside middleware groups and add role checking
 Route::get('/', function () {
@@ -91,6 +92,13 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
     Route::get('/SearchAbsenBalita', [AbsensiBalitaController::class, 'search'])->name('search.absen.balita');
     Route::get('/AbsenBalita/{id}/edit', [AbsensiBalitaController::class, 'edit'])->name('absen.balita.edit');
     Route::put('/AbsenBalita/{id}', [AbsensiBalitaController::class, 'update'])->name('absen.balita.update');
+
+    Route::get('CetakLaporan', function () {
+        return view('main.admin.CetakLaporan');
+    })->name('CetakLaporan');
+
+
+    Route::get('Export/AbsenBalita', [ExportController::class, 'exportAbsenBalita'])->name('Export.AbsenBalita');
 
     Route::get('/session/check', function () {
         // Ambil session tertentu

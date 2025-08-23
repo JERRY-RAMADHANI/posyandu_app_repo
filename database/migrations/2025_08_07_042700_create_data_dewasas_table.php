@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('rt')->nullable();
             $table->string('rw')->nullable();
             $table->string('status')->nullable();
-            $table->string('bmi')->nullable();
+            $table->float('bmi')->nullable();
             $table->text('keterangan')->nullable();
         });
     }

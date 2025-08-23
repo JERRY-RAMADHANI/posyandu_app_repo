@@ -157,10 +157,10 @@ class AbsensiBalitaController extends Controller
             ->firstOrFail();
 
         $validated = $request->validate([
-            'bb' => 'nullable|integer',
-            'tb' => 'nullable|integer',
-            'lk' => 'nullable|integer',
-            'll' => 'nullable|integer',
+            'bb' => 'nullable|numeric',
+            'tb' => 'nullable|numeric',
+            'lk' => 'nullable|numeric',
+            'll' => 'nullable|numeric',
         ]);
 
         // Calculate BMI if weight and height are provided

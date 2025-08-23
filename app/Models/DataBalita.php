@@ -8,16 +8,28 @@ class DataBalita extends Model
 {
     protected $table = 'data_balitas';
 
-    protected $fillable = [
+     protected $fillable = [
         'no_reg',
-        'nama',
         'nik',
+        'nama',
         'tanggal_lahir',
         'usia',
         'jenis_kelamin',
-        'nama_ortu',
         'alamat',
         'rt',
         'rw',
+        'nama_ortu',
+        'panjang_lahir',
+        'bb_lahir',
+        'anak_ke',
+        'buku_kia',
+        'posyandu',
+        'prov',
+        'kab',
+        'kec',
+        'nik_2_dig',
+        'tgl',
+        'bln',
+        'thn',
     ];
 }

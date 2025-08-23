@@ -135,25 +135,25 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">BB (kg)</label>
-                        <input type="number" name="bb"
+                        <input type="number" step="0.1" name="bb"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">TB (cm)</label>
-                        <input type="number" name="tb"
+                        <input type="number" step="0.1" name="tb"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">LL (cm)</label>
-                        <input type="number" name="ll"
+                        <input type="number" step="0.1" name="ll"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">LILA (cm)</label>
-                        <input type="number" name="lk"
+                        <input type="number" step="0.1" name="lk"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 

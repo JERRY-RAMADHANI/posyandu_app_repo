@@ -60,7 +60,7 @@ class DaftarBalitaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'no_reg' => 'required|string', // tambahkan validasi no_reg
+            'no_reg' => 'required|string',
             'nik' => 'nullable|string',
             'nama' => 'nullable|string',
             'tanggal_lahir' => 'nullable|string',
@@ -70,14 +70,54 @@ class DaftarBalitaController extends Controller
             'rt' => 'nullable|string|max:3',
             'rw' => 'nullable|string|max:3',
             'nama_ortu' => 'nullable|string',
+            'panjang_lahir' => 'nullable|numeric',
+            'bb_lahir' => 'nullable|numeric',
+            'anak_ke' => 'nullable|integer',
+            'buku_kia' => 'nullable|integer',
         ]);
 
-        $validated['jenis_kelamin'] = strtoupper($validated['jenis_kelamin']);
+        // Process NIK and date fields like before
+        if (!empty($validated['nik'])) {
+            $validated['prov'] = substr($validated['nik'], 0, 2);
+            $validated['kab'] = substr($validated['nik'], 2, 2);
+            $validated['kec'] = substr($validated['nik'], 4, 2);
+            $validated['nik_2_dig'] = substr($validated['nik'], -2);
+        }
 
-        DataBalita::create($validated);
+        if (!empty($validated['tanggal_lahir'])) {
+            $date = \Carbon\Carbon::parse($validated['tanggal_lahir']);
+            $validated['thn'] = $date->year;
+            $validated['bln'] = $date->month;
+            $validated['tgl'] = $date->day;
+        }
+
+        $validated['jenis_kelamin'] = strtoupper($validated['jenis_kelamin']);
+        $validated['posyandu'] = 'JERUK';
+
+        // Create data balita
+        $dataBalita = DataBalita::create($validated);
+
+        // Get active date from tanggal_aktifs
+        $tanggalAktif = \App\Models\TanggalAktif::first()->tanggal;
+
+        // Create absen entry for the same day
+        \App\Models\AbsenBalita::create([
+            'no_reg' => $validated['no_reg'],
+            'nik' => $validated['nik'],
+            'nama' => $validated['nama'],
+            'tanggal_lahir' => $validated['tanggal_lahir'],
+            'usia' => $validated['usia'],
+            'alamat' => $validated['alamat'],
+            'tanggal_absen' => $tanggalAktif,
+            'bb' => null,
+            'tb' => null,
+            'lk' => null,
+            'll' => null,
+            'ket' => null,
+        ]);
 
         return redirect()->route('daftar.balita')
-            ->with('success', 'Data berhasil ditambahkan');
+            ->with('success', 'Data berhasil ditambahkan dan auto absen untuk hari ini');
     }
 
     public function edit(DataBalita $dataBalita)
@@ -96,15 +136,34 @@ class DaftarBalitaController extends Controller
             'alamat' => 'nullable|string',
             'rt' => 'nullable|string|max:3',
             'rw' => 'nullable|string|max:3',
+            'panjang_lahir' => 'nullable|numeric',
             'nama_ortu' => 'nullable|string',
-            'bmi' => 'nullable|string',
-            'keterangan' => 'nullable|string'
+            'bb_lahir' => 'nullable|numeric',
+            'anak_ke' => 'nullable|integer',
+            'buku_kia' => 'nullable|integer',
         ]);
+
+        if (!empty($validated['nik'])) {
+            // Perbaiki nama field sesuai dengan migration dan model
+            $validated['prov'] = substr($validated['nik'], 0, 2);
+            $validated['kab'] = substr($validated['nik'], 2, 2);
+            $validated['kec'] = substr($validated['nik'], 4, 2);
+            $validated['nik_2_dig'] = substr($validated['nik'], -2);
+        }
+
+        if (!empty($validated['tanggal_lahir'])) {
+            $date = \Carbon\Carbon::parse($validated['tanggal_lahir']);
+            $validated['thn'] = $date->year;
+            $validated['bln'] = $date->month;
+            $validated['tgl'] = $date->day;
+        }
 
         // Ensure status and jenis_kelamin are uppercase
         if (isset($validated['jenis_kelamin'])) {
             $validated['jenis_kelamin'] = strtoupper($validated['jenis_kelamin']);
         }
+
+        $validated['posyandu'] = 'JERUK';
 
         $dataBalita->update($validated);
 

@@ -78,18 +78,42 @@
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                 </div>
 
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Anak Ke</label>
+                    <input type="number" name="anak_ke" value="{{ $dataBalita->anak_ke }}"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Panjang Lahir</label>
+                    <input type="number" step="0.1" name="panjang_lahir" value="{{ $dataBalita->panjang_lahir }}"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">BB Lahir</label>
+                    <input type="number" step="0.1" name="bb_lahir" value="{{ $dataBalita->bb_lahir }}"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Buku Kia</label>
+                    <input type="number" name="buku_kia" value="{{ $dataBalita->buku_kia }}"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+
+
+
                 <!-- RT/RW -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900">RT</label>
                         <input type="text" name="rt" maxlength="3" value="{{ $dataBalita->rt }}"
-                            oninput="this.value = this.value.toUpperCase()"
                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     </div>
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900">RW</label>
                         <input type="text" name="rw" maxlength="3" value="{{ $dataBalita->rw }}"
-                            oninput="this.value = this.value.toUpperCase()"
                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     </div>
                 </div>
