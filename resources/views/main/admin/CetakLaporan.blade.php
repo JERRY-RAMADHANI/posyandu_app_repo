@@ -9,10 +9,10 @@
             Download File Absen Balita
         </a>
         
-        <a  
-           class="px-6 py-4 rounded-2xl shadow-lg font-semibold text-black hover:scale-105 transition transform duration-200"
-           style="background-color: #FFE100;">
-            Download File 2
+        <a href="{{ route('Export.AbsenDewasa') }}" 
+           class="px-6 py-4 rounded-2xl shadow-lg font-semibold text-white hover:scale-105 transition transform duration-200"
+           style="background-color: #FF9B00;">
+            Download File Absen Dewasa
         </a>
         
         <a 

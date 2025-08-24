@@ -115,7 +115,6 @@
                                         '{{ $absen->lila }}',
                                         '{{ $absen->sistole }}',
                                         '{{ $absen->diastole }}',
-                                        '{{ $absen->ket }}'
                                     )"
                                         class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
                                         Input Data
@@ -143,46 +142,70 @@
                     @csrf
                     @method('PUT')
 
+                    <!-- BB Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">BB (kg)</label>
-                        <input type="number" name="bb"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">BB (kg)</label>
+                        <input type="number" step="0.1" name="bb" id="bbInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="bbCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- TB Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">TB (cm)</label>
-                        <input type="number" name="tb"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">TB (cm)</label>
+                        <input type="number" step="0.1" name="tb" id="tbInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="tbCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- LP Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">LP (cm)</label>
-                        <input type="number" name="lp"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">LP (cm)</label>
+                        <input type="number" step="0.1" name="lp" id="lpInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="lpCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- LILA Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">LILA (cm)</label>
-                        <input type="number" name="lila"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">LILA (cm)</label>
+                        <input type="number" step="0.1" name="lila" id="lilaInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="lilaCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- Sistole Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Sistole</label>
-                        <input type="number" name="sistole"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sistole</label>
+                        <input type="number" step="1" name="sistole" id="sistoleInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="sistoleCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- Diastole Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Diastole</label>
-                        <input type="number" name="diastole"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Keterangan</label>
-                        <input type="text" name="ket"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Diastole</label>
+                        <input type="number" step="1" name="diastole" id="diastoleInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="diastoleCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
                     <div class="flex justify-end space-x-3 mt-4">
@@ -202,63 +225,109 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search_input');
-            const rows = document.querySelectorAll('.search-row');
+    // Search functionality
+    const searchInput = document.getElementById('search_input');
+    const rows = document.querySelectorAll('.search-row');
 
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                rows.forEach(row => {
-                    const no_reg = row.children[0].textContent.toLowerCase();
-                    const nama = row.children[1].textContent.toLowerCase();
-
-                    if (no_reg.includes(searchTerm) || nama.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        rows.forEach(row => {
+            const no_reg = row.children[0].textContent.toLowerCase();
+            const nama = row.children[1].textContent.toLowerCase();
+            row.style.display = (no_reg.includes(searchTerm) || nama.includes(searchTerm)) ? '' : 'none';
         });
+    });
 
-        function showInputForm(id, nama, bb, tb, lp, lila, sistole, diastole, ket) {
-            const modal = document.getElementById('inputModal');
-            const form = document.getElementById('measurementForm');
-            const title = document.getElementById('modalTitle');
+    // Form handling
+    const form = document.getElementById('measurementForm');
+    const inputs = {
+        bb: document.getElementById('bbInput'),
+        tb: document.getElementById('tbInput'),
+        lp: document.getElementById('lpInput'),
+        lila: document.getElementById('lilaInput'),
+        sistole: document.getElementById('sistoleInput'),
+        diastole: document.getElementById('diastoleInput'),
+    };
+    const checks = {
+        bb: document.getElementById('bbCheck'),
+        tb: document.getElementById('tbCheck'),
+        lp: document.getElementById('lpCheck'),
+        lila: document.getElementById('lilaCheck'),
+        sistole: document.getElementById('sistoleCheck'),
+        diastole: document.getElementById('diastoleCheck'),
+    };
 
-            title.textContent = `Input Pengukuran - ${nama}`;
-            form.action = `/formDewasa/${id}/isi-bb`;
-
-            // Prefill data kalau ada
-            form.querySelector('[name="bb"]').value = bb || '';
-            form.querySelector('[name="tb"]').value = tb || '';
-            form.querySelector('[name="lp"]').value = lp || '';
-            form.querySelector('[name="lila"]').value = lila || '';
-            form.querySelector('[name="sistole"]').value = sistole || '';
-            form.querySelector('[name="diastole"]').value = diastole || '';
-            form.querySelector('[name="ket"]').value = ket || '';
-
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('inputModal').classList.add('hidden');
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('inputModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+    // Add event listeners for each checkbox
+    Object.keys(checks).forEach(key => {
+        checks[key].addEventListener('change', function() {
+            inputs[key].disabled = this.checked;
+            if (this.checked) {
+                inputs[key].value = '';
             }
         });
-    </script>
+    });
 
-    <!-- Success Alert -->
-    @if (session('success'))
-        <script>
-            alert("{{ session('success') }}");
-        </script>
-    @endif
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        Object.keys(checks).forEach(key => {
+            if (checks[key].checked) {
+                inputs[key].disabled = false;
+                inputs[key].value = '0';
+            }
+        });
+
+        this.submit();
+    });
+
+    // Modal functionality
+    const modal = document.getElementById('inputModal');
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // Attach showInputForm to window object so it's globally available
+    window.showInputForm = function(id, nama, bb, tb, lp, lila, sistole, diastole) {
+        const title = document.getElementById('modalTitle');
+        
+        // Reset form and checkboxes
+        form.reset();
+        Object.keys(checks).forEach(key => {
+            checks[key].checked = false;
+            inputs[key].disabled = false;
+        });
+
+        // Set form data
+        title.textContent = `Input Pengukuran - ${nama}`;
+        form.action = `/formDewasa/${id}/isi-bb`;
+
+        // Prefill existing data
+        inputs.bb.value = bb || '';
+        inputs.tb.value = tb || '';
+        inputs.lp.value = lp || '';
+        inputs.lila.value = lila || '';
+        inputs.sistole.value = sistole || '';
+        inputs.diastole.value = diastole || '';
+
+        modal.classList.remove('hidden');
+    };
+
+    // Make closeModal globally available
+    window.closeModal = function() {
+        modal.classList.add('hidden');
+    };
+});
+
+// Success Alert
+@if(session('success'))
+    alert("{{ session('success') }}");
+@endif
+</script>
 
 </body>
 

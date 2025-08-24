@@ -92,24 +92,52 @@
                     @csrf
                     @method('PUT')
                     
+                    <!-- Asam Urat Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Asam Urat</label>
-                        <input type="number" step="0.1" name="au" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Asam Urat</label>
+                        <input type="number" step="0.1" name="au" id="auInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="auCheck" 
+                                class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- GDA Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">GDA</label>
-                        <input type="number" name="gda" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">GDA</label>
+                        <input type="number" step="1" name="gda" id="gdaInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="gdaCheck"
+                                class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- Kolesterol Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Kolesterol</label>
-                        <input type="number" name="kol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kolesterol</label>
+                        <input type="number" step="1" name="kol" id="kolInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="kolCheck"
+                                class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- Keterangan Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Keterangan</label>
-                        <input type="text" name="ket" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
+                        <input type="text" name="ket" id="ketInput" oninput="this.value = this.value.toUpperCase()"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="ketCheck"
+                                class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
                     <div class="flex justify-end space-x-3 mt-4">
@@ -128,53 +156,114 @@
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('search_input');
-        const rows = document.querySelectorAll('.search-row');
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('search_input');
+    const rows = document.querySelectorAll('.search-row');
 
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        rows.forEach(row => {
+            const no_reg = row.children[0].textContent.toLowerCase();
+            const nama = row.children[1].textContent.toLowerCase();
             
-            rows.forEach(row => {
-                const no_reg = row.children[0].textContent.toLowerCase();
-                const nama = row.children[1].textContent.toLowerCase();
-                
-                if (no_reg.includes(searchTerm) || nama.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+            if (no_reg.includes(searchTerm) || nama.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
         });
     });
 
-    function showInputForm(id, nama) {
-        const modal = document.getElementById('inputModal');
-        const form = document.getElementById('measurementForm');
-        const title = document.getElementById('modalTitle');
+    // Form handling
+    initializeForm();
+});
 
-        title.textContent = `Input Pemeriksaan Darah - ${nama}`;
-        form.action = `/formDarah/${id}/isi-darah`;
-        modal.classList.remove('hidden');
-    }
+function initializeForm() {
+    const form = document.getElementById('measurementForm');
+    const inputs = {
+        au: document.getElementById('auInput'),
+        gda: document.getElementById('gdaInput'),
+        kol: document.getElementById('kolInput'),
+        ket: document.getElementById('ketInput')
+    };
+    const checks = {
+        au: document.getElementById('auCheck'),
+        gda: document.getElementById('gdaCheck'),
+        kol: document.getElementById('kolCheck'),
+        ket: document.getElementById('ketCheck')
+    };
 
-    function closeModal() {
-        document.getElementById('inputModal').classList.add('hidden');
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('inputModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
+    // Add event listeners for each checkbox
+    Object.keys(checks).forEach(key => {
+        checks[key].addEventListener('change', function() {
+            inputs[key].disabled = this.checked;
+            if (this.checked) {
+                inputs[key].value = '';
+            }
+        });
     });
-    </script>
 
-    <!-- Success Alert -->
-    @if(session('success'))
-        <script>
-            alert("{{ session('success') }}");
-        </script>
-    @endif
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Set values for checked boxes
+        Object.keys(checks).forEach(key => {
+            if (checks[key].checked) {
+                inputs[key].disabled = false;
+                if (key === 'ket') {
+                    inputs[key].value = 'KOSONG';
+                } else {
+                    inputs[key].value = '0';
+                }
+            }
+        });
+
+        // Submit the form
+        this.submit();
+    });
+}
+
+function showInputForm(id, nama) {
+    const modal = document.getElementById('inputModal');
+    const form = document.getElementById('measurementForm');
+    const title = document.getElementById('modalTitle');
+
+    // Reset form
+    form.reset();
+    
+    // Enable all inputs
+    ['auInput', 'gdaInput', 'kolInput', 'ketInput'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) input.disabled = false;
+    });
+
+    // Update modal content
+    title.textContent = `Input Pemeriksaan Darah - ${nama}`;
+    form.action = `/formDarah/${id}/isi-darah`;
+    
+    // Show modal
+    modal.classList.remove('hidden');
+}
+
+function closeModal() {
+    const modal = document.getElementById('inputModal');
+    modal.classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('inputModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Success Alert
+@if(session('success'))
+    alert("{{ session('success') }}");
+@endif
+</script>
 </body>
 </html>
