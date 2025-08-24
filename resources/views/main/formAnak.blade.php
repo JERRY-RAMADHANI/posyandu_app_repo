@@ -133,28 +133,48 @@
                     @csrf
                     @method('PUT')
 
+                    <!-- BB Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">BB (kg)</label>
-                        <input type="number" step="0.1" name="bb"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">BB (kg)</label>
+                        <input type="number" step="0.1" name="bb" id="bbInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="bbCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- TB Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">TB (cm)</label>
-                        <input type="number" step="0.1" name="tb"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">TB (cm)</label>
+                        <input type="number" step="0.1" name="tb" id="tbInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="tbCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- LL Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">LL (cm)</label>
-                        <input type="number" step="0.1" name="ll"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">LL (cm)</label>
+                        <input type="number" step="0.1" name="ll" id="llInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="llCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
+                    <!-- LILA Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">LILA (cm)</label>
-                        <input type="number" step="0.1" name="lk"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">LILA (cm)</label>
+                        <input type="number" step="0.1" name="lk" id="lkInput"
+                            class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="lkCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Kosong</span>
+                        </label>
                     </div>
 
                     <div class="flex justify-end space-x-3 mt-4">
@@ -220,6 +240,48 @@
             if (e.target === this) {
                 closeModal();
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('measurementForm');
+            const inputs = {
+                bb: document.getElementById('bbInput'),
+                tb: document.getElementById('tbInput'),
+                ll: document.getElementById('llInput'),
+                lk: document.getElementById('lkInput')
+            };
+            const checks = {
+                bb: document.getElementById('bbCheck'),
+                tb: document.getElementById('tbCheck'),
+                ll: document.getElementById('llCheck'),
+                lk: document.getElementById('lkCheck')
+            };
+
+            // Add event listeners for each checkbox
+            Object.keys(checks).forEach(key => {
+                checks[key].addEventListener('change', function() {
+                    inputs[key].disabled = this.checked;
+                    if (this.checked) {
+                        inputs[key].value = '';
+                    }
+                });
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent default submission
+                
+                // Set values for checked boxes
+                Object.keys(checks).forEach(key => {
+                    if (checks[key].checked) {
+                        inputs[key].disabled = false; // Enable input before submission
+                        inputs[key].value = '0';
+                    }
+                });
+
+                // Submit the form
+                this.submit();
+            });
         });
     </script>
 

@@ -97,6 +97,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Keterangan</label>
                         <input type="text" name="ket" id="ketInput"
+                            oninput="this.value = this.value.toUpperCase()"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 

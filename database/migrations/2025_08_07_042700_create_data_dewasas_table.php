@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->float('bmi')->nullable();
             $table->text('keterangan')->nullable();
+            $table->string('note')->nullable();
         });
     }
 

@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\AbsenBalita;
 use App\Models\TanggalAktif;
+use App\Models\DataBalita;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -33,29 +34,48 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         $tanggalAktif = TanggalAktif::first()->tanggal;
-        
+
         return AbsenBalita::whereDate('tanggal_absen', $tanggalAktif)
             ->get()
             ->map(function ($item, $index) {
+                $dataBalita = DataBalita::where('no_reg', $item->no_reg)->first();
+                $alamat = "RT {$dataBalita->rt} RW {$dataBalita->rw}";
+
+                // Helper function to format numbers
+                $formatNumber = function ($value) {
+                    if (
+                        $value === null
+                        || $value === ''
+                        || (is_string($value) && strtoupper($value) === 'KOSONG')
+                        || (is_numeric($value) && (float)$value == 0)
+                    ) {
+                        return '';
+                    }
+                    // Selalu tampilkan .0 meski bilangan bulat → simpan sebagai string
+                    return " " . sprintf("%.1f", (float)$value);
+                };
+
                 return [
-                    $index + 1, // NO urut
-                    $item->nama,
-                    $item->alamat,
+                    $index + 1,
+                    $item->nama === 'KOSONG' ? '' : $item->nama,
+                    $alamat,
                     $item->usia,
-                    number_format($item->bb, 1),
-                    number_format($item->tb, 1),
-                    number_format($item->ll, 1),
-                    number_format($item->lk, 1),
-                    '', // TTD column
-                    $item->ket
+                    $formatNumber($item->bb),
+                    $formatNumber($item->tb),
+                    $formatNumber($item->ll),
+                    $formatNumber($item->lk),
+                    '',
+                    $item->ket === 'KOSONG' ? '' : $item->ket,
                 ];
             });
     }
+
+
 
     public function headings(): array
     {
@@ -83,6 +103,8 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         $tanggalAktif = TanggalAktif::first()->tanggal;
         $tanggal = Carbon::parse($tanggalAktif);
 
+        Carbon::setLocale('id');
+
         // Set column widths exactly
         $sheet->getColumnDimension('A')->setWidth(4);
         $sheet->getColumnDimension('B')->setWidth(25);
@@ -100,16 +122,20 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         $sheet->mergeCells('B2:J2');
         $sheet->mergeCells('B3:J3');
         $sheet->mergeCells('A4:J4');
-        
+
         $sheet->setCellValue('B1', 'PEMERINTAH KABUPATEN SIDOARJO');
         $sheet->setCellValue('B2', 'KECAMATAN SEDATI');
         $sheet->setCellValue('B3', 'D E S A  P A B E A N');
         $sheet->setCellValue('A4', 'Jalan Abd. Rahman no. 02 Desa Pabean No. Telp. 031-99680895');
 
         // Header styling
-        $sheet->getStyle('B1:B3')->applyFromArray([
+        $sheet->getStyle('B1:J3')->applyFromArray([
             'font' => ['bold' => true, 'size' => 12],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true
+            ]
         ]);
 
         // Address line with single thin underline
@@ -130,10 +156,10 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         ]);
 
         // Info section with proper spacing
-        $sheet->setCellValue('A6', 'Nama Posyandu : Jeruk');
-        $sheet->setCellValue('A7', 'Hari/Tanggal  : ' . $tanggal->isoFormat('dddd[/]DD MMMM YYYY'));
-        $sheet->setCellValue('A8', 'Tempat        : Perum. Sedati Permai Jl. Mliwis RW-13');
-        
+        $sheet->setCellValue('A6', '    Nama Posyandu : Jeruk');
+        $sheet->setCellValue('A7', '    Hari/Tanggal       : ' . $tanggal->isoFormat('dddd[/]DD MMMM YYYY'));
+        $sheet->setCellValue('A8', '    Tempat                : Perum. Sedati Permai Jl. Mliwis RW-13');
+
         // Table headers with thin borders only
         $sheet->getStyle('A10:J10')->applyFromArray([
             'font' => ['bold' => true],
@@ -145,44 +171,58 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
 
         // Table body with thin borders
         $lastRow = 10 + $this->collection()->count();
-        $sheet->getStyle('A11:J'.$lastRow)->applyFromArray([
+        $sheet->getStyle('A11:J' . $lastRow)->applyFromArray([
             'borders' => [
                 'allBorders' => ['borderStyle' => Border::BORDER_THIN]
             ],
             'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical' => Alignment::VERTICAL_CENTER
             ]
         ]);
 
-        // Center align specific columns
-        $sheet->getStyle('A11:A'.$lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle('D11:I'.$lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
         // Footer section without borders
         $footerStart = $lastRow + 3;
-        
+
         // Left footer
-        $sheet->setCellValue('A'.$footerStart, '1. Jumlah Balita Usia 0-24 Bulan');
-        $sheet->setCellValue('A'.($footerStart+1), '2. Jumlah Balita Usia 25-60 Bulan');
-        $sheet->setCellValue('A'.($footerStart+2), '3. Jumlah Ibu Hamil');
-        $sheet->setCellValue('A'.($footerStart+3), '4. Jumlah Bayi Lahir');
-        $sheet->getStyle('A'.$footerStart.':A'.($footerStart+3))->getFont()->setSize(11);
+        $sheet->setCellValue('A' . $footerStart, '1. Jumlah Balita Usia 0-24 Bulan');
+        $sheet->setCellValue('A' . ($footerStart + 1), '2. Jumlah Balita Usia 25-60 Bulan');
+        $sheet->setCellValue('A' . ($footerStart + 2), '3. Jumlah Ibu Hamil');
+        $sheet->setCellValue('A' . ($footerStart + 3), '4. Jumlah Bayi Lahir');
+        $sheet->getStyle('A' . $footerStart . ':A' . ($footerStart + 3))->getFont()->setSize(11);
 
         // Right footer
-        $sheet->mergeCells('I'.$footerStart.':J'.$footerStart);
-        $sheet->setCellValue('I'.$footerStart, 'Mengetahui,');
-        $sheet->mergeCells('I'.($footerStart+1).':J'.($footerStart+1));
-        $sheet->setCellValue('I'.($footerStart+1), 'Ketua Posyandu');
-        
+        $sheet->mergeCells('I' . $footerStart . ':J' . $footerStart);
+        $sheet->setCellValue('I' . $footerStart, 'Mengetahui,');
+        $sheet->getStyle('I' . $footerStart . ':J' . $footerStart)->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        $sheet->mergeCells('I' . ($footerStart + 1) . ':J' . ($footerStart + 1));
+        $sheet->setCellValue('I' . ($footerStart + 1), 'Ketua Posyandu');
+        $sheet->getStyle('I' . ($footerStart + 1) . ':J' . ($footerStart + 1))->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
         // Signature
-        $sheet->mergeCells('I'.($footerStart+5).':J'.($footerStart+5));
-        $sheet->setCellValue('I'.($footerStart+5), '(NOER CHASANAH)');
-        $sheet->getStyle('I'.($footerStart+5))->applyFromArray([
+        $sheet->mergeCells('I' . ($footerStart + 5) . ':J' . ($footerStart + 5));
+        $sheet->setCellValue('I' . ($footerStart + 5), '(NOER CHASANAH)');
+        $sheet->getStyle('I' . ($footerStart + 5) . ':J' . ($footerStart + 5))->applyFromArray([
             'borders' => [
                 'top' => ['borderStyle' => Border::BORDER_THIN]
             ],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER
+            ]
         ]);
+
 
         // Add proper spacing
         $sheet->getRowDimension(1)->setRowHeight(20);
@@ -228,15 +268,18 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
             'borders' => [
                 'allBorders' => ['borderStyle' => Border::BORDER_THIN],
             ],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ],
         ]);
 
         // Add border separator before footer
-        $sheet->getStyle('A' . ($lastRow+1) . ':J' . ($lastRow+1))->applyFromArray([
-            'borders' => [
-                'bottom' => ['borderStyle' => Border::BORDER_THIN],
-            ],
-        ]);
+        // $sheet->getStyle('A' . ($lastRow + 1) . ':J' . ($lastRow + 1))->applyFromArray([
+        //     'borders' => [
+        //         'bottom' => ['borderStyle' => Border::BORDER_THIN],
+        //     ],
+        // ]);
 
         return $sheet;
     }

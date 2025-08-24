@@ -119,10 +119,10 @@ class AbsensiBalitaController extends Controller
             'tanggal_lahir' => '|date',
             'usia' => '|integer',
             'alamat' => '|string',
-            'bb' => 'nullable|integer',
-            'tb' => 'nullable|integer',
-            'lk' => 'nullable|integer',
-            'll' => 'nullable|integer',
+            'bb' => 'nullable|numeric',
+            'tb' => 'nullable|numeric',
+            'lk' => 'nullable|numeric',
+            'll' => 'nullable|numeric',
             'ket' => 'nullable|string',
         ]);
 
