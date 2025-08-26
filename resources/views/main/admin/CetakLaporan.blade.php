@@ -15,16 +15,16 @@
             Download File Absen Dewasa
         </a>
         
-        <a 
+        <a href="{{ route('Export.AbsenPUS') }}"
            class="px-6 py-4 rounded-2xl shadow-lg font-semibold text-black hover:scale-105 transition transform duration-200"
            style="background-color: #FFC900;">
-            Download File 3
+            Download File Absen PUS
         </a>
         
-        <a
+        <a href="{{ route('Export.P3') }}"
            class="px-6 py-4 rounded-2xl shadow-lg font-semibold text-black hover:scale-105 transition transform duration-200"
            style="background-color: #EBE389;">
-            Download File 4
+            Download File Laporan P3
         </a>
     </div>
 </div>

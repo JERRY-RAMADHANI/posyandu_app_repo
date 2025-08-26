@@ -59,25 +59,25 @@
             <div class="grid grid-cols-5 gap-4">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Berat Badan (kg)</label>
-                    <input type="number" name="bb" value="{{ $absenDewasa->bb }}"
+                    <input type="number" step="0.1" name="bb" value="{{ $absenDewasa->bb }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Tinggi Badan (cm)</label>
-                    <input type="number" name="tb" value="{{ $absenDewasa->tb }}"
+                    <input type="number" step="0.1" name="tb" value="{{ $absenDewasa->tb }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Lingkar Perut (cm)</label>
-                    <input type="number" name="lp" value="{{ $absenDewasa->lp }}"
+                    <input type="number" step="0.1" name="lp" value="{{ $absenDewasa->lp }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">BMI</label>
-                    <input type="number" name="bmi" id="bmi" value="{{ $absenDewasa->bmi }}" readonly
+                    <input type="number" step="0.1" name="bmi" id="bmi" value="{{ $absenDewasa->bmi }}" readonly
                         class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
                 </div>
 
@@ -91,19 +91,19 @@
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">LILA (cm)</label>
-                    <input type="number" name="lila" value="{{ $absenDewasa->lila }}"
+                    <input type="number" step="0.1" name="lila" value="{{ $absenDewasa->lila }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Sistole</label>
-                    <input type="number" name="sistole" value="{{ $absenDewasa->sistole }}"
+                    <input type="number" step="0.1" name="sistole" value="{{ $absenDewasa->sistole }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Diastole</label>
-                    <input type="number" name="diastole" value="{{ $absenDewasa->diastole }}"
+                    <input type="number" step="0.1" name="diastole" value="{{ $absenDewasa->diastole }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
             </div>
@@ -111,19 +111,19 @@
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Asam Urat</label>
-                    <input type="number" name="au" value="{{ $absenDewasa->au }}"
+                    <input type="number" step="0.1" name="au" value="{{ $absenDewasa->au }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">GDA</label>
-                    <input type="number" name="gda" value="{{ $absenDewasa->gda }}"
+                    <input type="number" step="0.1" name="gda" value="{{ $absenDewasa->gda }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900">Kolesterol</label>
-                    <input type="number" name="kol" value="{{ $absenDewasa->kol }}"
+                    <input type="number" step="0.1" name="kol" value="{{ $absenDewasa->kol }}"
                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5">
                 </div>
             </div>

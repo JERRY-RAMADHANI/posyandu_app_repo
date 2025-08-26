@@ -102,6 +102,10 @@ Route::middleware(['auth', 'verified', 'role:0'])->group(function () {
 
     Route::get('Export/AbsenDewasa', [ExportController::class, 'exportAbsenDewasa'])->name('Export.AbsenDewasa');
 
+    Route::get('Export/AbsenPUS', [ExportController::class, 'exportAbsenPUS'])->name('Export.AbsenPUS');
+
+    Route::get('Export/P3', [ExportController::class, 'exportP3'])->name('Export.P3');
+
     Route::get('/session/check', function () {
         // Ambil session tertentu
         $sessionData = [

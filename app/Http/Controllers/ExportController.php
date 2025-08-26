@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Exports\PUSExport;
 use App\Models\TanggalAktif;
 use Illuminate\Http\Request;
 use App\Exports\AbsenBalitaExport;
@@ -26,5 +27,22 @@ class ExportController extends Controller
         $tanggal = Carbon::parse($tanggalAktif)->format('d-m-Y');
         $filename = 'absen-dewasa-' . $tanggal . '.xlsx';
         return Excel::download(new AbsenDewasaExport, $filename);
+    }
+
+    public function exportAbsenPUS()
+    {
+        $tanggalAktif = TanggalAktif::first()->tanggal;
+        $tanggal = Carbon::parse($tanggalAktif)->format('d-m-Y');
+        $filename = 'absen-PUS-' . $tanggal . '.xlsx';
+        return Excel::download(new PUSExport, $filename);
+    }
+
+    public function exportP3()
+    {
+        $tanggalAktif = TanggalAktif::first()->tanggal;
+        $bulanTahun   = Carbon::parse($tanggalAktif)->translatedFormat('F Y');
+
+        $filename = 'Laporan-P3' . $bulanTahun . '.xlsx';
+        return Excel::download(new PUSExport, $filename);
     }
 }

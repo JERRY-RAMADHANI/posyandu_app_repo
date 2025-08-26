@@ -125,15 +125,15 @@ class AbsenDewasaController extends Controller
             'tanggal_lahir' => 'required|date',
             'usia' => 'required|integer',
             'alamat' => 'required|string',
-            'bb' => 'nullable|integer',
-            'tb' => 'nullable|integer',
-            'lp' => 'nullable|integer',
-            'lila' => 'nullable|integer',
-            'sistole' => 'nullable|integer',
-            'diastole' => 'nullable|integer',
-            'au' => 'nullable|integer',
-            'gda' => 'nullable|integer',
-            'kol' => 'nullable|integer',
+            'bb' => 'nullable|numeric',
+            'tb' => 'nullable|numeric',
+            'lp' => 'nullable|numeric',
+            'lila' => 'nullable|numeric',
+            'sistole' => 'nullable|numeric',
+            'diastole' => 'nullable|numeric',
+            'au' => 'nullable|numeric',
+            'gda' => 'nullable|numeric',
+            'kol' => 'nullable|numeric',
             'ket' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
@@ -180,12 +180,12 @@ class AbsenDewasaController extends Controller
             ->firstOrFail();
 
         $validated = $request->validate([
-            'bb' => 'nullable|integer',
-            'tb' => 'nullable|integer',
-            'lp' => 'nullable|integer',
-            'lila' => 'nullable|integer',
-            'sistole' => 'nullable|integer',
-            'diastole' => 'nullable|integer',
+            'bb' => 'nullable|numeric',
+            'tb' => 'nullable|numeric',
+            'lp' => 'nullable|numeric',
+            'lila' => 'nullable|numeric',
+            'sistole' => 'nullable|numeric',
+            'diastole' => 'nullable|numeric',
             'ket' => 'nullable|string',
         ]);
 
