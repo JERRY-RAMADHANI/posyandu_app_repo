@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Exports\P3Export;
 use App\Exports\PUSExport;
 use App\Models\TanggalAktif;
 use Illuminate\Http\Request;
@@ -42,7 +43,7 @@ class ExportController extends Controller
         $tanggalAktif = TanggalAktif::first()->tanggal;
         $bulanTahun   = Carbon::parse($tanggalAktif)->translatedFormat('F Y');
 
-        $filename = 'Laporan-P3' . $bulanTahun . '.xlsx';
-        return Excel::download(new PUSExport, $filename);
+        $filename = 'Laporan-P3-' . $bulanTahun . '.xlsx';
+        return Excel::download(new P3Export, $filename);
     }
 }
