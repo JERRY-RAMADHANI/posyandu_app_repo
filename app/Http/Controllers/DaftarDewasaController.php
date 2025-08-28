@@ -72,7 +72,7 @@ class DaftarDewasaController extends Controller
             'rt' => 'nullable|string|max:3',
             'rw' => 'nullable|string|max:3',
             'status' => 'nullable|string',
-            'note' => 'nullable|string',
+            'ket' => 'nullable|string',
         ]);
 
         $validated['status'] = strtoupper($validated['status']);
@@ -100,11 +100,11 @@ class DaftarDewasaController extends Controller
             'au' => null,
             'gda' => null,
             'kol' => null,
-            'ket' => null,
+            'note' => null,
             'bmi' => null,
             'hasil' => null,
             'status' => $validated['status'],
-            'note' => $validated['note'],
+            'note' => $validated['ket'],
         ]);
 
         return redirect()->route('daftar.dewasa')
@@ -129,8 +129,7 @@ class DaftarDewasaController extends Controller
             'rw' => 'nullable|string|max:3',
             'status' => 'nullable|string',
             'bmi' => 'nullable|string',
-            'keterangan' => 'nullable|string',
-            'note' => 'nullable|string'
+            'ket' => 'nullable|string',
         ]);
 
         // Ensure status and jenis_kelamin are uppercase

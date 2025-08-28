@@ -15,14 +15,31 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Cell\StringValueBinder;
 use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use Maatwebsite\Excel\Concerns\WithDrawings;
 
-class PUSExport extends StringValueBinder implements FromCollection, WithHeadings, WithStyles, WithCustomStartCell, WithCustomValueBinder
+class PUSExport extends StringValueBinder implements FromCollection, WithHeadings, WithStyles, WithCustomStartCell, WithCustomValueBinder, WithDrawings
 {
     protected $data;
 
     /**
      * Ambil data sekali aja (cache di property)
      */
+    public function drawings()
+    {
+        $drawing = new Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Logo Sidoarjo');
+        $drawing->setPath(public_path('/sound/sidoarjo-black-white-seeklogo.png'));
+        $drawing->setHeight(100);
+        $drawing->setWidth(100);
+        $drawing->setOffsetX(50); // Reset offset kecil
+        $drawing->setOffsetY(15);
+        $drawing->setCoordinates('C1'); // Pindah ke kolom C
+
+        return $drawing;
+    }
+
      public function collection()
     {
         $tanggalAktif = TanggalAktif::first()->tanggal;
@@ -67,7 +84,7 @@ class PUSExport extends StringValueBinder implements FromCollection, WithHeading
                     $formatNumber($item->au),
                     $formatNumber($item->gda),
                     $formatNumber($item->kol),
-                    $item->ket === 'KOSONG' ? '' : $item->ket
+                    $item->ket
                 ];
             });
     }
@@ -77,15 +94,18 @@ class PUSExport extends StringValueBinder implements FromCollection, WithHeading
      */
     public function startCell(): string
     {
-        return 'A4'; // headings dimulai di row 4
+        return 'A10'; // Sama seperti AbsenDewasaExport
     }
 
     public function styles(Worksheet $sheet)
     {
-        $lastRow = 4 + $this->collection()->count(); // headings mulai row 4
+        $tanggalAktif = TanggalAktif::first()->tanggal;
+        $tanggal = Carbon::parse($tanggalAktif);
 
-        // Kolom widths
-        $sheet->getColumnDimension('A')->setWidth(15);
+        Carbon::setLocale('id');
+
+        // Update column widths untuk PUS (16 kolom A-P)
+        $sheet->getColumnDimension('A')->setWidth(15); // Kasih ruang untuk logo
         $sheet->getColumnDimension('B')->setWidth(20);
         $sheet->getColumnDimension('C')->setWidth(35);
         $sheet->getColumnDimension('D')->setWidth(15);
@@ -102,97 +122,163 @@ class PUSExport extends StringValueBinder implements FromCollection, WithHeading
         $sheet->getColumnDimension('O')->setWidth(8);
         $sheet->getColumnDimension('P')->setWidth(20);
 
-        // Judul
-        $sheet->mergeCells('A1:P1');
-        $sheet->setCellValue('A1', 'POSYANDU ILP JERUK');
+        // Header text - FULL WIDTH CENTER (A1 sampai P4)
+        $sheet->mergeCells('A1:P1'); // Full width termasuk kolom logo
         $sheet->mergeCells('A2:P2');
-        $sheet->setCellValue('A2', 'LAPORAN BULANAN KEHADIRAN PASANGAN USIA SUBUR');
+        $sheet->mergeCells('A3:P3');
+        $sheet->mergeCells('A4:P4');
 
-        // Style judul
-        $sheet->getStyle('A1:P2')->applyFromArray([
-            'font' => ['bold' => true, 'size' => 14],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
-        ]);
-        $sheet->getStyle('O3:P3')->applyFromArray([
-            'font' => ['size' => 11],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_RIGHT]
+        $sheet->setCellValue('A1', 'PEMERINTAH KABUPATEN SIDOARJO');
+        $sheet->setCellValue('A2', 'KECAMATAN SEDATI');
+        $sheet->setCellValue('A3', 'D E S A  P A B E A N');
+        $sheet->setCellValue('A4', 'Jalan Abd. Rahman no. 02 Desa Pabean No. Telp. 031-99680895');
+
+        // Header styling - PERFECT CENTER
+        $sheet->getStyle('A1:P3')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 12],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true
+            ]
         ]);
 
-        // Header row (row 4)
+        // Address line with single thin underline
         $sheet->getStyle('A4:P4')->applyFromArray([
-            'font' => ['bold' => true, 'size' => 11],
+            'borders' => [
+                'bottom' => ['borderStyle' => Border::BORDER_THIN]
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ],
+            'font' => ['color' => ['rgb' => '000000']]
+        ]);
+
+        // Title with proper spacing - ubah judul untuk PUS
+        $sheet->mergeCells('A5:P5');
+        $sheet->setCellValue('A5', 'LAPORAN BULANAN KEHADIRAN PASANGAN USIA SUBUR');
+        $sheet->getStyle('A5')->applyFromArray([
+            'font' => ['bold' => true, 'underline' => true, 'size' => 12],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        // Info section with proper spacing
+        $sheet->setCellValue('A6', '    Nama Posyandu : Jeruk');
+        $sheet->setCellValue('A7', '    Hari/Tanggal       : ' . $tanggal->isoFormat('dddd[/]DD MMMM YYYY'));
+        $sheet->setCellValue('A8', '    Tempat                : Perum. Sedati Permai Jl. Mliwis RW-13');
+
+        // Table headers dengan kolom A-P
+        $sheet->getStyle('A10:P10')->applyFromArray([
+            'font' => ['bold' => true],
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        // Table body dengan kolom A-P
+        $lastRow = 10 + $this->collection()->count();
+        $sheet->getStyle('A11:P' . $lastRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        // Footer section - TAMBAH JARAK
+        $footerStart = $lastRow + 3; // Ubah dari +1 ke +3 untuk kasih jarak
+
+        // Right footer
+        $sheet->mergeCells('N' . $footerStart . ':P' . $footerStart);
+        $sheet->setCellValue('N' . $footerStart, 'Mengetahui,');
+        $sheet->getStyle('N' . $footerStart . ':P' . $footerStart)->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        $sheet->mergeCells('N' . ($footerStart + 1) . ':P' . ($footerStart + 1));
+        $sheet->setCellValue('N' . ($footerStart + 1), 'Ketua Posyandu');
+        $sheet->getStyle('N' . ($footerStart + 1) . ':P' . ($footerStart + 1))->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        // Signature - TANPA GARIS
+        $sheet->mergeCells('N' . ($footerStart + 5) . ':P' . ($footerStart + 5));
+        $sheet->setCellValue('N' . ($footerStart + 5), '(NOER CHASANAH)');
+        $sheet->getStyle('N' . ($footerStart + 5) . ':P' . ($footerStart + 5))->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        // Row heights untuk header yang cukup tinggi untuk logo
+        $sheet->getRowDimension(1)->setRowHeight(25);
+        $sheet->getRowDimension(2)->setRowHeight(25);
+        $sheet->getRowDimension(3)->setRowHeight(25);
+        $sheet->getRowDimension(4)->setRowHeight(25);
+        $sheet->getRowDimension(5)->setRowHeight(30);
+        $sheet->getRowDimension(6)->setRowHeight(20);
+        $sheet->getRowDimension(7)->setRowHeight(20);
+        $sheet->getRowDimension(8)->setRowHeight(20);
+        $sheet->getRowDimension(10)->setRowHeight(25);
+
+        // Footer row heights
+        $sheet->getRowDimension($footerStart)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 1)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 2)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 3)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 4)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 5)->setRowHeight(20);
+
+        // Set row height untuk table content
+        for ($row = 11; $row <= $lastRow; $row++) {
+            $sheet->getRowDimension($row)->setRowHeight(30);
+        }
+
+        // Add outer border untuk entire report
+        $lastFooterRow = $footerStart + 5;
+        $sheet->getStyle('A1:P' . $lastFooterRow)->applyFromArray([
+            'borders' => [
+                'outline' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
+
+        // Table header dengan gray background
+        $sheet->getStyle('A10:P10')->applyFromArray([
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'E2E2E2']
+                'startColor' => ['rgb' => 'D3D3D3'], // Light gray background
             ],
+            'font' => ['bold' => true],
             'borders' => [
-                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN],
             ],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
-        ]);
-
-        // Data rows
-        $sheet->getStyle('A5:P' . $lastRow)->applyFromArray([
-            'borders' => [
-                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
             ],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
-        ]);
-
-        // Row heights
-        $sheet->getRowDimension(1)->setRowHeight(30);
-        $sheet->getRowDimension(2)->setRowHeight(30);
-        $sheet->getRowDimension(4)->setRowHeight(35);
-        for ($i = 5; $i <= $lastRow; $i++) {
-            $sheet->getRowDimension($i)->setRowHeight(25);
-        }
-
-        // Outer border
-        $sheet->getStyle('A1:P' . $lastRow)->applyFromArray([
-            'borders' => [
-                'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]
-            ]
-        ]);
-
-        // Footer
-        $footerStart = $lastRow + 2;
-        $sheet->mergeCells('A' . $footerStart . ':P' . $footerStart);
-        $sheet->getRowDimension($footerStart)->setRowHeight(10);
-
-        $sheet->mergeCells('O' . ($footerStart + 1) . ':P' . ($footerStart + 1));
-        $sheet->setCellValue('O' . ($footerStart + 1), 'Mengetahui,');
-
-        $sheet->mergeCells('O' . ($footerStart + 2) . ':P' . ($footerStart + 2));
-        $sheet->setCellValue('O' . ($footerStart + 2), 'Ketua Posyandu');
-
-        $sheet->getRowDimension($footerStart + 3)->setRowHeight(40);
-
-        $sheet->mergeCells('O' . ($footerStart + 4) . ':P' . ($footerStart + 4));
-        $sheet->setCellValue('O' . ($footerStart + 4), '(NOER CHASANAH)');
-
-        for ($row = $footerStart + 1; $row <= $footerStart + 4; $row++) {
-            if ($row != $footerStart + 3) {
-                $sheet->getStyle('O' . $row . ':P' . $row)->applyFromArray([
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'font' => ['size' => 11]
-                ]);
-            }
-        }
-
-        $sheet->getStyle('O' . ($footerStart + 4) . ':P' . ($footerStart + 4))->applyFromArray([
-            'borders' => [
-                'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]
-            ]
-        ]);
-
-        $sheet->getStyle('A1:P' . ($footerStart + 4))->applyFromArray([
-            'borders' => [
-                'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]
-            ]
         ]);
 
         // Format khusus kolom NIK jadi text (biar leading zero gak hilang)
-        $sheet->getStyle('B5:B' . $lastRow)->getNumberFormat()
+        $sheet->getStyle('B11:B' . $lastRow)->getNumberFormat()
             ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
 
         return $sheet;

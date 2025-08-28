@@ -8,6 +8,7 @@ use App\Models\TanggalAktif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Routing\Controller;
+use Exception; 
 
 class AbsensiBalitaController extends Controller
 {
@@ -80,8 +81,22 @@ class AbsensiBalitaController extends Controller
                 ->with('error', $validated['nama'] . ' sudah melakukan absensi pada tanggal ' . date('d-m-Y', strtotime($tanggal_absen)));
         }
 
+        // Hitung ulang umur berdasarkan tanggal aktif
+        $umurBaru = $validated['usia'];
+        if ($validated['tanggal_lahir']) {
+            $tanggalAktif = TanggalAktif::first()->tanggal;
+            $umurBaru = $this->hitungUmurBalita($validated['tanggal_lahir'], $tanggalAktif);
+        }
+
+        // Update umur di tabel data_balitas
+        if ($validated['no_reg']) {
+            DataBalita::where('no_reg', $validated['no_reg'])
+                ->update(['usia' => $umurBaru]);
+        }
+
         // Add tanggal_absen to validated data
         $validated['tanggal_absen'] = $tanggal_absen;
+        $validated['usia'] = $umurBaru; // Gunakan umur yang sudah dihitung ulang
 
         // Set other fields to null initially
         $validated = array_merge($validated, [
@@ -225,5 +240,28 @@ class AbsensiBalitaController extends Controller
 
         return redirect()->route('formNote')
             ->with('success', 'Data berhasil diperbarui');
+    }
+
+    // Tambahkan method baru untuk hitung umur balita (dalam bulan)
+    private function hitungUmurBalita($tanggalLahir, $tanggalAktif)
+    {
+        try {
+            $lahir = \Carbon\Carbon::parse($tanggalLahir);
+            $aktif = \Carbon\Carbon::parse($tanggalAktif);
+            
+            // Calculate total months
+            $months = ($aktif->year - $lahir->year) * 12;
+            $months += $aktif->month - $lahir->month;
+
+            // Adjust for day of month
+            if ($aktif->day < $lahir->day) {
+                $months--;
+            }
+
+            // Ensure we never return negative months
+            return max(0, $months);
+        } catch (Exception $e) {
+            return 0;
+        }
     }
 }

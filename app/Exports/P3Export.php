@@ -226,6 +226,21 @@ class P3Export implements FromCollection, WithHeadings, WithStyles, WithCustomSt
         $balitas = DataBalita::orderBy('nama')->get();
         
         $data = [];
+        $no = 1; // Counter untuk nomor increment
+        
+        // Helper function to format numbers
+        $formatNumber = function ($value) {
+            if (
+                $value === null
+                || $value === ''
+                || (is_string($value) && strtoupper($value) === 'KOSONG')
+                || (is_numeric($value) && (float)$value == 0)
+            ) {
+                return '';
+            }
+
+            return " " . sprintf("%.1f", (float)$value);
+        };
         
         foreach ($balitas as $balita) {
             $row = [
@@ -242,7 +257,7 @@ class P3Export implements FromCollection, WithHeadings, WithStyles, WithCustomSt
                 $balita->rt ?? '',
                 $balita->rw ?? '',
                 $balita->posyandu ?? '',
-                $balita->no_reg ?? '',
+                $no, // Ganti $balita->no_reg dengan nomor increment
                 $balita->nama ?? '',
                 $this->getGenderCode($balita->jenis_kelamin),
                 $balita->tanggal_lahir ? Carbon::parse($balita->tanggal_lahir)->format('d') : '',
@@ -253,27 +268,41 @@ class P3Export implements FromCollection, WithHeadings, WithStyles, WithCustomSt
             // THN SEBELUMNYA - 4 kolom (NOV BB, NOV TB, DES BB, DES TB)
             $prevYear = $this->year - 1;
             
-            // NOV tahun sebelumnya
+            // NOV tahun sebelumnya - ambil tanggal terbesar jika ada multiple
             $novAbsen = AbsenBalita::where('no_reg', $balita->no_reg)
                 ->whereYear('tanggal_absen', $prevYear)
                 ->whereMonth('tanggal_absen', 11)
+                ->orderBy('tanggal_absen', 'desc')
                 ->first();
             
-            $row[] = $novAbsen ? number_format((float)$novAbsen->bb, 1) : '';
-            $row[] = $novAbsen ? number_format((float)$novAbsen->tb, 1) : '';
+            $row[] = $novAbsen ? $formatNumber($novAbsen->bb) : '';
+            $row[] = $novAbsen ? $formatNumber($novAbsen->tb) : '';
             
-            // DES tahun sebelumnya
+            // DES tahun sebelumnya - ambil tanggal terbesar jika ada multiple
             $desAbsen = AbsenBalita::where('no_reg', $balita->no_reg)
                 ->whereYear('tanggal_absen', $prevYear)
                 ->whereMonth('tanggal_absen', 12)
+                ->orderBy('tanggal_absen', 'desc')
                 ->first();
             
-            $row[] = $desAbsen ? number_format((float)$desAbsen->bb, 1) : '';
-            $row[] = $desAbsen ? number_format((float)$desAbsen->tb, 1) : '';
+            $row[] = $desAbsen ? $formatNumber($desAbsen->bb) : '';
+            $row[] = $desAbsen ? $formatNumber($desAbsen->tb) : '';
 
-            // TANGGAL PENGUKURAN - 12 kolom kosong (X-AI)
-            for ($i = 0; $i < 12; $i++) {
-                $row[] = '';
+            // TANGGAL PENGUKURAN - 12 kolom (X-AI) - mengambil tanggal terbesar dari data absensi
+            for ($month = 1; $month <= 12; $month++) {
+                $absen = AbsenBalita::where('no_reg', $balita->no_reg)
+                    ->whereYear('tanggal_absen', $this->year)
+                    ->whereMonth('tanggal_absen', $month)
+                    ->orderBy('tanggal_absen', 'desc') // Ambil tanggal terbesar
+                    ->first();
+                
+                // Jika ada absensi di bulan tersebut, ambil tanggalnya
+                if ($absen && $absen->tanggal_absen) {
+                    $tanggal = Carbon::parse($absen->tanggal_absen)->format('d');
+                    $row[] = $tanggal;
+                } else {
+                    $row[] = '';
+                }
             }
 
             // BLN PERTAMA TIMBANG - 1 kolom
@@ -282,45 +311,26 @@ class P3Export implements FromCollection, WithHeadings, WithStyles, WithCustomSt
             // IMD - 1 kolom
             $row[] = '';
             
-            // UMUR BULAN JALAN - 1 kolom
-            $umur = '';
-            if ($balita->tanggal_lahir) {
-                try {
-                    $umur = Carbon::parse($balita->tanggal_lahir)->diffInMonths(Carbon::now());
-                } catch (Exception $e) {
-                    $umur = '';
-                }
-            }
-            $row[] = $umur;
+            // UMUR BULAN JALAN - 1 kolom (gunakan umur dari data balita)
+            $row[] = '';
 
             // Pengukuran bulanan (JANUARI - DESEMBER) - 96 kolom (12 bulan x 8 kolom)
             for ($month = 1; $month <= 12; $month++) {
                 $absen = AbsenBalita::where('no_reg', $balita->no_reg)
                     ->whereYear('tanggal_absen', $this->year)
                     ->whereMonth('tanggal_absen', $month)
+                    ->orderBy('tanggal_absen', 'desc') // Ambil tanggal terbesar
                     ->first();
 
                 if ($absen) {
-                    // Hitung umur pada bulan tersebut
-                    $umurBulan = '';
-                    if ($balita->tanggal_lahir && $absen->tanggal_absen) {
-                        try {
-                            $lahir = Carbon::parse($balita->tanggal_lahir);
-                            $tanggalAbsen = Carbon::parse($absen->tanggal_absen);
-                            $umurBulan = $lahir->diffInMonths($tanggalAbsen);
-                        } catch (Exception $e) {
-                            $umurBulan = '';
-                        }
-                    }
-                    
                     $row = array_merge($row, [
-                        $umurBulan, // Umur (Bln)
-                        $absen->bb ? number_format((float)$absen->bb, 1) : '',
-                        $absen->tb ? number_format((float)$absen->tb, 1) : '',
+                        $absen->usia ?? '', // Umur (Bln) dari database absen
+                        $absen->bb ? $formatNumber($absen->bb) : '',
+                        $absen->tb ? $formatNumber($absen->tb) : '',
                         '', // ASI-E Ya
                         '', // ASI-E Tdk
-                        $absen->lila ? number_format((float)$absen->lila, 1) : '',
-                        '', // LK
+                        $absen->ll ? $formatNumber($absen->ll) : '', // LILA dari kolom 'll'
+                        $absen->lk ? $formatNumber($absen->lk) : '', // LK dari database
                         '' // MP-ASI
                     ]);
                 } else {
@@ -329,6 +339,7 @@ class P3Export implements FromCollection, WithHeadings, WithStyles, WithCustomSt
             }
 
             $data[] = $row;
+            $no++; // Increment nomor untuk baris selanjutnya
         }
 
         return collect($data);

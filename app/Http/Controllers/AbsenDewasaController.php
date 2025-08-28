@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\DataDewasa;
 use App\Models\AbsenDewasa;
+use App\Models\TanggalAktif;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
+use Illuminate\Routing\Controller;
+use Exception;
 
 class AbsenDewasaController extends Controller
 {
@@ -65,21 +68,34 @@ class AbsenDewasaController extends Controller
             'alamat' => 'nullable|string'
         ]);
 
-        // Get tanggal_absen from session
-        $tanggal_absen = session('tanggal');
+        // Get tanggal aktif
+        $tanggalAktif = TanggalAktif::first()->tanggal;
 
         // Check if person already attended today
         $existingAbsen = AbsenDewasa::where('no_reg', $validated['no_reg'])
-            ->whereDate('tanggal_absen', $tanggal_absen)
+            ->whereDate('tanggal_absen', $tanggalAktif)
             ->first();
 
         if ($existingAbsen) {
             return redirect()->back()
-                ->with('error', $validated['nama'] . ' sudah melakukan absensi pada tanggal ' . date('d-m-Y', strtotime($tanggal_absen)));
+                ->with('error', $validated['nama'] . ' sudah melakukan absensi pada tanggal ' . date('d-m-Y', strtotime($tanggalAktif)));
+        }
+
+        // Hitung ulang umur berdasarkan tanggal aktif
+        $umurBaru = $validated['usia'];
+        if ($validated['tanggal_lahir']) {
+            $umurBaru = $this->hitungUmurDewasa($validated['tanggal_lahir'], $tanggalAktif);
+        }
+
+        // Update umur di tabel data_dewasas
+        if ($validated['no_reg']) {
+            DataDewasa::where('no_reg', $validated['no_reg'])
+                ->update(['umur' => $umurBaru]);
         }
 
         // Add tanggal_absen to validated data
-        $validated['tanggal_absen'] = $tanggal_absen;
+        $validated['tanggal_absen'] = $tanggalAktif;
+        $validated['usia'] = $umurBaru; // Gunakan umur yang sudah dihitung ulang
 
         // Set other fields to null initially
         $validated = array_merge($validated, [
@@ -92,10 +108,11 @@ class AbsenDewasaController extends Controller
             'au' => null,
             'gda' => null,
             'kol' => null,
+            'ket' => null,
             'bmi' => null,
             'hasil' => null,
-            'ket' => null,
-            'note' => null
+            'status' => null,
+            'note' => null,
         ]);
 
         AbsenDewasa::create($validated);
@@ -186,7 +203,6 @@ class AbsenDewasaController extends Controller
             'lila' => 'nullable|numeric',
             'sistole' => 'nullable|numeric',
             'diastole' => 'nullable|numeric',
-            'ket' => 'nullable|string',
         ]);
 
         if ($request->bb && $request->tb) {
@@ -290,5 +306,26 @@ class AbsenDewasaController extends Controller
         }
 
         return [$bmi, $status];
+    }
+
+    // Method untuk hitung umur dewasa (dalam tahun)
+    private function hitungUmurDewasa($tanggalLahir, $tanggalAktif)
+    {
+        try {
+            $lahir = Carbon::parse($tanggalLahir);
+            $aktif = Carbon::parse($tanggalAktif);
+            
+            $age = $aktif->year - $lahir->year;
+            
+            // Adjust if birthday hasn't occurred this year
+            if ($aktif->month < $lahir->month || 
+                ($aktif->month == $lahir->month && $aktif->day < $lahir->day)) {
+                $age--;
+            }
+            
+            return max(0, $age);
+        } catch (Exception $e) {
+            return 0;
+        }
     }
 }

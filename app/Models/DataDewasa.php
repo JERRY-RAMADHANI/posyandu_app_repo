@@ -20,8 +20,7 @@ class DataDewasa extends Model
         'rw',
         'status',
         'bmi',
-        'keterangan',
-        'note'
+        'ket',
     ];
 
     // public static function boot()

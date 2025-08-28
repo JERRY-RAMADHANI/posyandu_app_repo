@@ -101,14 +101,8 @@
 
             <!-- Keterangan -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900">Keterangan</label>
-                <textarea name="keterangan" rows="3" oninput="this.value = this.value.toUpperCase()"
-                    class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">{{ $dataDewasa->keterangan }}</textarea>
-            </div>
-
-            <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900">Note</label>
-                <input type="text" name="note" value="{{ $dataDewasa->note }}" oninput="this.value = this.value.toUpperCase()"
+                <label class="block mb-2 text-sm font-medium text-gray-900">KETERANGAN</label>
+                <input type="text" name="ket" value="{{ $dataDewasa->ket }}" oninput="this.value = this.value.toUpperCase()"
                     class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
             </div>
 

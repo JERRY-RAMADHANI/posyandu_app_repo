@@ -24,11 +24,11 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         $drawing->setName('Logo');
         $drawing->setDescription('Logo Sidoarjo');
         $drawing->setPath(public_path('/sound/sidoarjo-black-white-seeklogo.png'));
-        $drawing->setHeight(80);
+        $drawing->setHeight(80); // Sesuaikan ukuran
         $drawing->setWidth(80);
-        $drawing->setOffsetX(80);
-        $drawing->setOffsetY(20);
-        $drawing->setCoordinates('A1');
+        $drawing->setOffsetX(60); // Posisi horizontal dalam cell
+        $drawing->setOffsetY(5);  // Posisi vertikal dalam cell
+        $drawing->setCoordinates('B1'); // Logo tetap di A1 tapi dengan positioning yang tepat
 
         return $drawing;
     }
@@ -117,19 +117,19 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         $sheet->getColumnDimension('I')->setWidth(15);
         $sheet->getColumnDimension('J')->setWidth(15);
 
-        // Header text
-        $sheet->mergeCells('B1:J1');
-        $sheet->mergeCells('B2:J2');
-        $sheet->mergeCells('B3:J3');
+        // Header text - FULL WIDTH CENTER (A1 sampai J4)
+        $sheet->mergeCells('A1:J1'); // Full width termasuk kolom logo
+        $sheet->mergeCells('A2:J2');
+        $sheet->mergeCells('A3:J3');
         $sheet->mergeCells('A4:J4');
 
-        $sheet->setCellValue('B1', 'PEMERINTAH KABUPATEN SIDOARJO');
-        $sheet->setCellValue('B2', 'KECAMATAN SEDATI');
-        $sheet->setCellValue('B3', 'D E S A  P A B E A N');
+        $sheet->setCellValue('A1', 'PEMERINTAH KABUPATEN SIDOARJO');
+        $sheet->setCellValue('A2', 'KECAMATAN SEDATI');
+        $sheet->setCellValue('A3', 'D E S A  P A B E A N');
         $sheet->setCellValue('A4', 'Jalan Abd. Rahman no. 02 Desa Pabean No. Telp. 031-99680895');
 
-        // Header styling
-        $sheet->getStyle('B1:J3')->applyFromArray([
+        // Header styling - PERFECT CENTER
+        $sheet->getStyle('A1:J3')->applyFromArray([
             'font' => ['bold' => true, 'size' => 12],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -139,12 +139,15 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         ]);
 
         // Address line with single thin underline
-        $sheet->getStyle('A4')->applyFromArray([
+        $sheet->getStyle('A4:J4')->applyFromArray([
             'borders' => [
                 'bottom' => ['borderStyle' => Border::BORDER_THIN]
             ],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'font' => ['color' => ['rgb' => '000000']] // Changed to black
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ],
+            'font' => ['color' => ['rgb' => '000000']]
         ]);
 
         // Title with proper spacing
@@ -152,7 +155,10 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         $sheet->setCellValue('A5', 'DAFTAR HADIR POSYANDU DESA PABEAN');
         $sheet->getStyle('A5')->applyFromArray([
             'font' => ['bold' => true, 'underline' => true, 'size' => 12],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
         ]);
 
         // Info section with proper spacing
@@ -160,16 +166,19 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         $sheet->setCellValue('A7', '    Hari/Tanggal       : ' . $tanggal->isoFormat('dddd[/]DD MMMM YYYY'));
         $sheet->setCellValue('A8', '    Tempat                : Perum. Sedati Permai Jl. Mliwis RW-13');
 
-        // Table headers with thin borders only
+        // Table headers dengan kolom A-J
         $sheet->getStyle('A10:J10')->applyFromArray([
             'font' => ['bold' => true],
             'borders' => [
                 'allBorders' => ['borderStyle' => Border::BORDER_THIN]
             ],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
         ]);
 
-        // Table body with thin borders
+        // Table body dengan kolom A-J
         $lastRow = 10 + $this->collection()->count();
         $sheet->getStyle('A11:J' . $lastRow)->applyFromArray([
             'borders' => [
@@ -181,11 +190,10 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
             ]
         ]);
 
-        // Footer section without borders
+        // Footer section
         $footerStart = $lastRow + 3;
 
-        // Left footer
-        // Left footer
+        // Left footer (tetap ada untuk AbsenBalita)
         $sheet->setCellValue('A' . $footerStart, '1. Jumlah Balita Usia 0-24 Bulan');
         $sheet->setCellValue('A' . ($footerStart + 1), '2. Jumlah Balita Usia 25-60 Bulan');
         $sheet->setCellValue('A' . ($footerStart + 2), '3. Jumlah Ibu Hamil');
@@ -200,8 +208,7 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
             ]
         ]);
 
-
-        // Right footer
+        // Right footer - SAMA DENGAN YANG LAIN
         $sheet->mergeCells('I' . $footerStart . ':J' . $footerStart);
         $sheet->setCellValue('I' . $footerStart, 'Mengetahui,');
         $sheet->getStyle('I' . $footerStart . ':J' . $footerStart)->applyFromArray([
@@ -220,52 +227,41 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
             ]
         ]);
 
-        // Signature
+        // Signature - TANPA GARIS (sama dengan yang lain)
         $sheet->mergeCells('I' . ($footerStart + 5) . ':J' . ($footerStart + 5));
         $sheet->setCellValue('I' . ($footerStart + 5), '(NOER CHASANAH)');
         $sheet->getStyle('I' . ($footerStart + 5) . ':J' . ($footerStart + 5))->applyFromArray([
-            'borders' => [
-                'top' => ['borderStyle' => Border::BORDER_THIN]
-            ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER
             ]
         ]);
 
-        $sheet->getRowDimension($footerStart)->setRowHeight(20);
-
-        // Tinggi baris "Ketua Posyandu"
-        $sheet->getRowDimension($footerStart + 1)->setRowHeight(20);
-
-        // Kasih space buat tanda tangan (lebih tinggi)
-        $sheet->getRowDimension($footerStart + 2)->setRowHeight(20);
-        $sheet->getRowDimension($footerStart + 3)->setRowHeight(20);
-        $sheet->getRowDimension($footerStart + 4)->setRowHeight(20);
-
-        // Tinggi baris tanda tangan
-        $sheet->getRowDimension($footerStart + 5)->setRowHeight(20);
-
-
-
-        // Add proper spacing
-        $sheet->getRowDimension(1)->setRowHeight(20);
-        $sheet->getRowDimension(2)->setRowHeight(20);
-        $sheet->getRowDimension(3)->setRowHeight(20);
-        $sheet->getRowDimension(4)->setRowHeight(20);
-        $sheet->getRowDimension(5)->setRowHeight(25);
+        // Row heights untuk header yang cukup tinggi untuk logo
+        $sheet->getRowDimension(1)->setRowHeight(25);
+        $sheet->getRowDimension(2)->setRowHeight(25);
+        $sheet->getRowDimension(3)->setRowHeight(25);
+        $sheet->getRowDimension(4)->setRowHeight(25);
+        $sheet->getRowDimension(5)->setRowHeight(30);
         $sheet->getRowDimension(6)->setRowHeight(20);
         $sheet->getRowDimension(7)->setRowHeight(20);
         $sheet->getRowDimension(8)->setRowHeight(20);
         $sheet->getRowDimension(10)->setRowHeight(25);
 
-        // Set row height for table content (main section)
-        $lastRow = 10 + $this->collection()->count();
+        // Footer row heights
+        $sheet->getRowDimension($footerStart)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 1)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 2)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 3)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 4)->setRowHeight(20);
+        $sheet->getRowDimension($footerStart + 5)->setRowHeight(20);
+
+        // Set row height untuk table content
         for ($row = 11; $row <= $lastRow; $row++) {
-            $sheet->getRowDimension($row)->setRowHeight(30); // Ubah angka 30 sesuai kebutuhan
+            $sheet->getRowDimension($row)->setRowHeight(30);
         }
 
-        // Add outer border for entire report
+        // Add outer border untuk entire report
         $lastFooterRow = $footerStart + 5;
         $sheet->getStyle('A1:J' . $lastFooterRow)->applyFromArray([
             'borders' => [
@@ -275,14 +271,7 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
             ],
         ]);
 
-        // Header section styling with border separator
-        $sheet->getStyle('A4:J4')->applyFromArray([
-            'borders' => [
-                'bottom' => ['borderStyle' => Border::BORDER_THIN],
-            ],
-        ]);
-
-        // Table header with gray background
+        // Table header dengan gray background
         $sheet->getStyle('A10:J10')->applyFromArray([
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -297,13 +286,6 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
                 'vertical' => Alignment::VERTICAL_CENTER
             ],
         ]);
-
-        // Add border separator before footer
-        // $sheet->getStyle('A' . ($lastRow + 1) . ':J' . ($lastRow + 1))->applyFromArray([
-        //     'borders' => [
-        //         'bottom' => ['borderStyle' => Border::BORDER_THIN],
-        //     ],
-        // ]);
 
         return $sheet;
     }

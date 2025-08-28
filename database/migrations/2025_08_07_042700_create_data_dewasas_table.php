@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nik')->nullable();
             $table->string('no_reg')->nullable();
             $table->string('nama')->nullable();
-            $table->string('tanggal_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
             $table->integer('umur')->nullable();
             $table->string('jenis_kelamin')->nullable();
             $table->string('alamat')->nullable();
@@ -24,8 +24,7 @@ return new class extends Migration
             $table->string('rw')->nullable();
             $table->string('status')->nullable();
             $table->string('bmi')->nullable();
-            $table->text('keterangan')->nullable();
-            $table->string('note')->nullable();
+            $table->text('ket')->nullable();
         });
     }
 
