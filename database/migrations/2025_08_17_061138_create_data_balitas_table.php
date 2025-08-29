@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('data_balitas', function (Blueprint $table) {
             $table->id();
-            $table->string('no_reg')->unique()->nullable();
+            $table->string('no_reg')->nullable();
             $table->string('prov')->nullable();
             $table->string('kab')->nullable();
             $table->string('kec')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->float('panjang_lahir')->nullable();
             $table->integer('buku_kia')->nullable();
             $table->string('nama')->nullable();
-            $table->string('nik')->unique()->nullable();
+            $table->string('nik')->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->integer('tgl')->nullable();
             $table->integer('bln')->nullable();

@@ -244,7 +244,7 @@ class P3Export implements FromCollection, WithHeadings, WithStyles, WithCustomSt
         
         foreach ($balitas as $balita) {
             $row = [
-                $balita->nik ?? '',
+                " " . ($balita->nik ?? ''), // TAMBAH SPASI DI DEPAN UNTUK FORCE STRING
                 $balita->prov ?? '',
                 $balita->kab ?? '',
                 $balita->kec ?? '',

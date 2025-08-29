@@ -27,7 +27,7 @@ class AbsenBalitaExport implements FromCollection, WithHeadings, WithStyles, Wit
         $drawing->setHeight(80); // Sesuaikan ukuran
         $drawing->setWidth(80);
         $drawing->setOffsetX(60); // Posisi horizontal dalam cell
-        $drawing->setOffsetY(5);  // Posisi vertikal dalam cell
+        $drawing->setOffsetY(15);  // Posisi vertikal dalam cell
         $drawing->setCoordinates('B1'); // Logo tetap di A1 tapi dengan positioning yang tepat
 
         return $drawing;
