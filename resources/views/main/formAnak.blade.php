@@ -88,11 +88,11 @@
                                         if (is_null($absen->tb)) {
                                             $kosong[] = 'TB';
                                         }
+                                        if (is_null($absen->lk)) {
+                                            $kosong[] = 'LK';
+                                        }
                                         if (is_null($absen->ll)) {
                                             $kosong[] = 'LL';
-                                        }
-                                        if (is_null($absen->lk)) {
-                                            $kosong[] = 'LILA';
                                         }
                                     @endphp
                                     <span class="text-red-500">{{ implode(', ', $kosong) }}</span>
@@ -104,8 +104,8 @@
                                         '{{ $absen->nama }}',
                                         '{{ $absen->bb }}',
                                         '{{ $absen->tb }}',
-                                        '{{ $absen->ll }}',
                                         '{{ $absen->lk }}',
+                                        '{{ $absen->ll }}',
                                     )"
                                         class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
                                         Input Data
@@ -157,22 +157,22 @@
 
                     <!-- LL Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">LL (cm)</label>
-                        <input type="number" step="0.1" name="ll" id="llInput"
+                        <label class="block text-sm font-medium text-gray-700 mb-2">LK (cm)</label>
+                        <input type="number" step="0.1" name="lk" id="lkInput"
                             class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
                         <label class="inline-flex items-center">
-                            <input type="checkbox" id="llCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <input type="checkbox" id="lkCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
                             <span class="ml-2 text-sm text-gray-600">Kosong</span>
                         </label>
                     </div>
 
                     <!-- LILA Field -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">LILA (cm)</label>
-                        <input type="number" step="0.1" name="lk" id="lkInput"
+                        <label class="block text-sm font-medium text-gray-700 mb-2">LL (cm)</label>
+                        <input type="number" step="0.1" name="ll" id="llInput"
                             class="block w-full rounded-md border-gray-300 shadow-sm mb-2">
                         <label class="inline-flex items-center">
-                            <input type="checkbox" id="lkCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                            <input type="checkbox" id="llCheck" class="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
                             <span class="ml-2 text-sm text-gray-600">Kosong</span>
                         </label>
                     </div>
@@ -225,8 +225,8 @@
             // Prefill data kalau ada
             form.querySelector('[name="bb"]').value = bb || '';
             form.querySelector('[name="tb"]').value = tb || '';
-            form.querySelector('[name="ll"]').value = ll || '';
             form.querySelector('[name="lk"]').value = lk || '';
+            form.querySelector('[name="ll"]').value = ll || '';
 
             modal.classList.remove('hidden');
         }

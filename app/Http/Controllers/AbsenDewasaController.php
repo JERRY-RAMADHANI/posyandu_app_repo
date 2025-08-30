@@ -65,7 +65,8 @@ class AbsenDewasaController extends Controller
             'nama' => 'nullable|string',
             'tanggal_lahir' => 'nullable|date',
             'usia' => 'nullable|integer',
-            'alamat' => 'nullable|string'
+            'alamat' => 'nullable|string',
+            'note' => 'nullable|string'
         ]);
 
         // Get tanggal aktif
@@ -112,7 +113,6 @@ class AbsenDewasaController extends Controller
             'bmi' => null,
             'hasil' => null,
             'status' => null,
-            'note' => null,
         ]);
 
         AbsenDewasa::create($validated);

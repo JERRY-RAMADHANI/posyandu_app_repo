@@ -84,7 +84,7 @@ class PUSExport extends StringValueBinder implements FromCollection, WithHeading
                     $formatNumber($item->au),
                     $formatNumber($item->gda),
                     $formatNumber($item->kol),
-                    $item->ket
+                    $item->ket === 'KOSONG' ? '' : $item->ket,
                 ];
             });
     }

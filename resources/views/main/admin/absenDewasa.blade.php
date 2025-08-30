@@ -73,8 +73,8 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Status</label>
-                        <input type="text" name="note" id="status" readonly
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Note</label>
+                        <input type="text" name="note" id="note" readonly
                             class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
                     </div>
                 </div>
@@ -174,6 +174,7 @@
                 document.getElementById('tanggal_lahir').value = data.tanggal_lahir;
                 document.getElementById('usia').value = data.umur;
                 document.getElementById('status').value = data.status;
+                document.getElementById('note').value = data.ket;
 
                 // Format alamat jadi RT / RW
                 let alamat = "";
