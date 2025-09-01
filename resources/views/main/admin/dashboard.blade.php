@@ -241,14 +241,15 @@
                                     backgroundColor: 'rgba(255, 0, 0, 0.1)',
                                     borderWidth: 2,
                                     borderDash: [5, 5],
-                                    pointRadius: 3,
-                                    pointHoverRadius: 5,
-                                    pointBackgroundColor: '#FF0000',
-                                    pointBorderColor: '#FFFFFF',
-                                    pointBorderWidth: 2,
+                                    pointRadius: 0, // Hilangkan titik
+                                    pointHoverRadius: 0, // Hilangkan hover titik
+                                    pointBackgroundColor: 'transparent',
+                                    pointBorderColor: 'transparent',
+                                    pointBorderWidth: 0,
                                     fill: false,
                                     tension: 0.4,
-                                    order: 1
+                                    order: 1,
+                                    pointHitRadius: 0 // Hilangkan area hover
                                 }
                             ]
                         },
@@ -304,14 +305,15 @@
                                     backgroundColor: 'rgba(255, 0, 0, 0.1)',
                                     borderWidth: 2,
                                     borderDash: [5, 5],
-                                    pointRadius: 3,
-                                    pointHoverRadius: 5,
-                                    pointBackgroundColor: '#FF0000',
-                                    pointBorderColor: '#FFFFFF',
-                                    pointBorderWidth: 2,
+                                    pointRadius: 0, // Hilangkan titik
+                                    pointHoverRadius: 0, // Hilangkan hover titik
+                                    pointBackgroundColor: 'transparent',
+                                    pointBorderColor: 'transparent',
+                                    pointBorderWidth: 0,
                                     fill: false,
                                     tension: 0.4,
-                                    order: 1
+                                    order: 1,
+                                    pointHitRadius: 0 // Hilangkan area hover
                                 }
                             ]
                         },

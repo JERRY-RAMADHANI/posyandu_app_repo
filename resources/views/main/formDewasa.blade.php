@@ -319,7 +319,7 @@
                 inputs.bb.value = bb || '';
                 inputs.tb.value = tb || '';
                 inputs.lp.value = lp || '';
-                inputs.lila.value = lila || '';x
+                inputs.lila.value = lila || '';
                 inputs.sistole.value = sistole || '';
                 inputs.diastole.value = diastole || '';
 

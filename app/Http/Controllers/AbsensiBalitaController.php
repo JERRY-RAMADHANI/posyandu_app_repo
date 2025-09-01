@@ -128,12 +128,12 @@ class AbsensiBalitaController extends Controller
             ->firstOrFail();
 
         $validated = $request->validate([
-            'no_reg' => '|string',
-            'nik' => '|string',
-            'nama' => '|string',
-            'tanggal_lahir' => '|date',
-            'usia' => '|integer',
-            'alamat' => '|string',
+            'no_reg' => 'nullable|string',
+            'nik' => 'nullable|string',
+            'nama' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|date',
+            'usia' => 'nullable|integer',
+            'alamat' => 'nullable|string',
             'bb' => 'nullable|numeric',
             'tb' => 'nullable|numeric',
             'lk' => 'nullable|numeric',
