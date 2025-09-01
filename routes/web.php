@@ -54,9 +54,73 @@ Route::get('/', function () {
         }
     }
 
+    // GET CHART DATA
+    $currentYear = \Carbon\Carbon::now()->year;
+    
+    // Data untuk dewasa/lansia
+    $dewasaData = \App\Models\AbsenDewasa::select(
+        \Illuminate\Support\Facades\DB::raw('MONTH(tanggal_absen) as month'),
+        \Illuminate\Support\Facades\DB::raw('COUNT(*) as count')
+    )
+    ->whereYear('tanggal_absen', $currentYear)
+    ->groupBy(\Illuminate\Support\Facades\DB::raw('MONTH(tanggal_absen)'))
+    ->orderBy('month')
+    ->get()
+    ->keyBy('month');
+
+    // Data untuk balita/remaja
+    $balitaData = \App\Models\AbsenBalita::select(
+        \Illuminate\Support\Facades\DB::raw('MONTH(tanggal_absen) as month'),
+        \Illuminate\Support\Facades\DB::raw('COUNT(*) as count')
+    )
+    ->whereYear('tanggal_absen', $currentYear)
+    ->groupBy(\Illuminate\Support\Facades\DB::raw('MONTH(tanggal_absen)'))
+    ->orderBy('month')
+    ->get()
+    ->keyBy('month');
+
+    // Prepare data arrays - INDEPENDEN untuk masing-masing chart
+    $months = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGS', 'SEPT', 'OKT', 'NOV', 'DES'];
+    
+    // Data Dewasa - tampilkan bulan yang ada data dewasa
+    $dewasaCounts = [];
+    $dewasaMonths = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $dewasaCount = $dewasaData->get($i)->count ?? 0;
+        if ($dewasaCount > 0) {
+            $dewasaMonths[] = $months[$i - 1];
+            $dewasaCounts[] = $dewasaCount;
+        }
+    }
+
+    // Data Balita - tampilkan bulan yang ada data balita
+    $balitaCounts = [];
+    $balitaMonths = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $balitaCount = $balitaData->get($i)->count ?? 0;
+        if ($balitaCount > 0) {
+            $balitaMonths[] = $months[$i - 1];
+            $balitaCounts[] = $balitaCount;
+        }
+    }
+
+    $chartData = [
+        'dewasa' => [
+            'months' => $dewasaMonths,
+            'data' => $dewasaCounts,
+            'hasData' => !empty($dewasaCounts)
+        ],
+        'balita' => [
+            'months' => $balitaMonths, 
+            'data' => $balitaCounts,
+            'hasData' => !empty($balitaCounts)
+        ],
+        'hasData' => !empty($dewasaCounts) || !empty($balitaCounts)
+    ];
 
     return view('main.admin.dashboard', [
-        'nomor' => session('nomor')
+        'nomor' => session('nomor'),
+        'chartData' => $chartData
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
