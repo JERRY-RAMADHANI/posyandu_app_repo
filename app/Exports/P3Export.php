@@ -432,9 +432,9 @@ class P3Export implements FromCollection, WithHeadings, WithStyles, WithCustomSt
         
         $gender = strtoupper(trim($jenisKelamin));
         
-        if ($gender === 'LAKI-LAKI' || $gender === 'L') {
+        if ($gender === 'LAKI-LAKI' || $gender === 'L' || $gender === '1') {
             return '1';
-        } elseif ($gender === 'PEREMPUAN' || $gender === 'P') {
+        } elseif ($gender === 'PEREMPUAN' || $gender === 'P' || $gender === '2') {
             return '2';
         }
         
